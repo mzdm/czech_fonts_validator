@@ -16,7 +16,7 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> {
-  final selectedFilter = new ValueNotifier<Confidence>(Confidence.ANY);
+  final selectedFilter = new ValueNotifier<Confidence>(Confidence.UNKWN);
 
   static const drawerMenuActions = <String>{
     'Copy plain data',
