@@ -1,6 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-class LanguageFonts {
+class LanguageFonts extends Equatable {
   final String langName;
   final List<String> fontNames;
 
@@ -20,13 +21,5 @@ class LanguageFonts {
       };
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is LanguageFonts &&
-          runtimeType == other.runtimeType &&
-          langName == other.langName &&
-          fontNames == other.fontNames;
-
-  @override
-  int get hashCode => langName.hashCode ^ fontNames.hashCode;
+  List<Object> get props => [langName, fontNames];
 }

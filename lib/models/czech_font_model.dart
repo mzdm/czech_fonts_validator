@@ -1,8 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 enum Confidence { UNKWN, ANY, HIGHEST, HIGH, MEDIUM, LOW, LOWEST }
 
-class CzechFont {
+class CzechFont extends Equatable {
   final String fontName;
   final Confidence confidence;
 
@@ -26,13 +27,5 @@ class CzechFont {
       'CzechFont{fontName: $fontName, confidence: $confidence}';
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is CzechFont &&
-          runtimeType == other.runtimeType &&
-          fontName == other.fontName &&
-          confidence == other.confidence;
-
-  @override
-  int get hashCode => fontName.hashCode ^ confidence.hashCode;
+  List<Object> get props => [fontName, confidence];
 }
