@@ -1,5 +1,8 @@
 part of 'font_validation_page.dart';
 
+const _baseTestPhrase = 'Prilis zlutoucky kun upel dabelske o';
+const _czechTestPhrase = 'Příliš žluťoučký kůň úpěl ďábelské ó';
+
 TextStyle _getFontTextStyle(String fontName) =>
     GoogleFonts.getFont(fontName).copyWith(fontSize: 18.0);
 

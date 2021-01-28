@@ -7,9 +7,6 @@ import 'package:google_language_fonts/google_fonts.dart';
 
 part 'font_validation_helper.dart';
 
-const _baseTestPhrase = 'Prilis zlutoucky kun upel dabelske o';
-const _czechTestPhrase = 'Příliš žluťoučký kůň úpěl ďábelské ó';
-
 final _czechTextKey = GlobalKey(debugLabel: 'czechTextKey');
 final _latinTextKey = GlobalKey(debugLabel: 'latinTextKey');
 
