@@ -1,10 +1,10 @@
 part of 'font_validation_page.dart';
 
-const _baseTestPhrase = 'Prilis zlutoucky kun upel dabelske o';
-const _czechTestPhrase = 'Příliš žluťoučký kůň úpěl ďábelské ó';
+const baseTestPhrase = 'Prilis zlutoucky kun upel dabelske o';
+const czechTestPhrase = 'Příliš žluťoučký kůň úpěl ďábelské ó';
 
-TextStyle _getFontTextStyle(String fontName) =>
-    GoogleFonts.getFont(fontName).copyWith(fontSize: 18.0);
+TextStyle getFontTextStyle(String fontName, {double fontSize = 18.0}) =>
+    GoogleFonts.getFont(fontName).copyWith(fontSize: fontSize);
 
 bool _areGoogleFontsRendered() {
   final styleBase = (_latinTextKey.currentContext?.widget as Text)?.style;

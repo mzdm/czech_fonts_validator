@@ -31,7 +31,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
 
   Stream<String> _streamData() async* {
     // final streamData = Stream.fromIterable(widget.fonts.fontNames);
-    final fontNamesList = widget.fonts.fontNames;
+    final fontNamesList = widget.fonts.fontNames.getRange(0, 10).toList();
     fontNamesList.insert(0, fontNamesList[0]);
 
     for (var i = 0; i < fontNamesList.length; i++) {
@@ -110,15 +110,15 @@ class _FontValidationPageState extends State<FontValidationPage> {
                 '$currScanLength/$totalScanLength',
               ),
               Text(
-                _baseTestPhrase,
+                baseTestPhrase,
                 key: _latinTextKey,
-                style: _getFontTextStyle(currFontName),
+                style: getFontTextStyle(currFontName),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
               Text(
-                _czechTestPhrase,
+                czechTestPhrase,
                 key: _czechTextKey,
-                style: _getFontTextStyle(currFontName),
+                style: getFontTextStyle(currFontName),
               ),
             ],
           );
