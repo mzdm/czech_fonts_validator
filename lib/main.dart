@@ -8,6 +8,8 @@ import 'models/language_fonts_model.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  final service = Service(httpClient: http.Client());
+
   @override
   Widget build(BuildContext context) {
     final service = Service(httpClient: http.Client());
