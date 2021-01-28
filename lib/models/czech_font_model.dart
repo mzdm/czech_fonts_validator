@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-enum Confidence { HIGHEST, HIGH, MEDIUM, LOW, LOWEST }
+enum Confidence { ANY, HIGHEST, HIGH, MEDIUM, LOW, LOWEST }
 
 class CzechFont {
   final String fontName;

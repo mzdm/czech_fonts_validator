@@ -4,22 +4,27 @@ import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FontBloc {
-  Stream<List<CzechFont>> fontStream;
-
-  final BehaviorSubject<CzechFont> _firstController = BehaviorSubject();
-  final BehaviorSubject<CzechFont> _secondController = BehaviorSubject();
+  final ReplaySubject<CzechFont> _firstController = ReplaySubject();
+  final ReplaySubject<CzechFont> _secondController = ReplaySubject();
 
   final BehaviorSubject<int> _length = BehaviorSubject.seeded(0);
 
-  FontBloc() {
-    fontStream = Rx.merge([_firstController]).scan(
+  Stream<CzechFont> get concatStreams =>
+      Rx.concat([_firstController, _secondController]);
+
+  Stream<List<CzechFont>> getFilteredStream(Confidence confidence) {
+    return concatStreams.where(
+      (item) {
+        if (confidence == Confidence.ANY) return true;
+        return item.confidence == confidence;
+      },
+    ).scan(
       (List<CzechFont> accumulated, value, index) => accumulated..add(value),
       <CzechFont>[],
     ).asBroadcastStream();
+  }
 
-    fontStream.listen((event) {
-      print(event.toString());
-    });
+  FontBloc() {
     _firstController.listen((value) {
       // print('listen: ${value.toString()}');
     });
