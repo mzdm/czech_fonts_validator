@@ -12,8 +12,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final service = Service(httpClient: http.Client());
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
@@ -26,16 +24,16 @@ class MyApp extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return buildScaffold('Error: Couldn\'t retrieve data.');
+            return buildPageContent('Error: Couldn\'t retrieve data.');
           }
 
-          return buildScaffold('Retrieving data ...');
+          return buildPageContent('Retrieving data ...');
         },
       ),
     );
   }
 
-  Scaffold buildScaffold(String text) {
+  Scaffold buildPageContent(String text) {
     return Scaffold(
       body: Center(
         child: Text(text),
