@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<LanguageFonts>(
         future: service.fetchBaseFonts(),
         builder: (_, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
             print('fetched font data');
             return FontValidationPage(fonts: snapshot.data);
           }
