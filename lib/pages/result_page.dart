@@ -101,43 +101,48 @@ class _ResultPageState extends State<ResultPage> {
             if (snapshot.hasData) {
               final czechFontsList = snapshot.data;
 
-              return ListView.separated(
-                itemCount: czechFontsList.length,
-                separatorBuilder: (_, int index) => Divider(thickness: 2.0),
-                itemBuilder: (context, index) {
-                  final item = czechFontsList[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Row(
+              return czechFontsList.isEmpty
+                  ? Center(child: Text('No fonts found in: $value'))
+                  : ListView.separated(
+                      itemCount: czechFontsList.length,
+                      separatorBuilder: (_, __) => Divider(thickness: 2.0),
+                      itemBuilder: (_, index) {
+                        final item = czechFontsList[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                item.fontName,
-                                style: TextStyle(color: Colors.grey),
+                              Center(
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      item.fontName,
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    SizedBox(width: 45.0),
+                                    Text(
+                                      item.confidence.toString(),
+                                      style: TextStyle(color: Colors.teal),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              SizedBox(width: 45.0),
+                              SizedBox(height: 10.0),
                               Text(
-                                item.confidence.toString(),
-                                style: TextStyle(color: Colors.teal),
+                                czechTestPhrase,
+                                style: getFontTextStyle(
+                                  item.fontName,
+                                  fontSize: 26.0,
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                        SizedBox(height: 10.0),
-                        Text(
-                          czechTestPhrase,
-                          style:
-                              getFontTextStyle(item.fontName, fontSize: 26.0),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
+                        );
+                      },
+                    );
             }
+
             return Text('---');
           },
         );
