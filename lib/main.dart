@@ -16,10 +16,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       home: FutureBuilder<LanguageFonts>(
-        future: service.retrieveFonts(),
+        future: service.fetchBaseFonts(),
         builder: (_, snapshot) {
           if (snapshot.hasData) {
-            print('font data retrieved');
+            print('fetched font data');
             return FontValidationPage(fonts: snapshot.data);
           }
 

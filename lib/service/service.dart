@@ -15,7 +15,7 @@ class Service {
       'https://raw.githubusercontent.com/mzdm/google-language-fonts-flutter/dev-1.0.0/generator/lang_font_subsets/fonts.json';
   static const _langLookupVal = 'LatinExt';
 
-  Future<LanguageFonts> retrieveFonts() async {
+  Future<LanguageFonts> fetchBaseFonts() async {
     final response = await _httpClient.get(_baseUrl);
 
     if (response.statusCode != 200) {
