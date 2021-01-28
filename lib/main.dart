@@ -13,9 +13,8 @@ class MyApp extends StatelessWidget {
     final service = Service(httpClient: http.Client());
 
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: FutureBuilder<LanguageFonts>(
         future: service.retrieveFonts(),
         builder: (_, snapshot) {
