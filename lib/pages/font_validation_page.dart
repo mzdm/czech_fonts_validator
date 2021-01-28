@@ -49,14 +49,15 @@ class _FontValidationPageState extends State<FontValidationPage> {
     }
   }
 
-  Future<String> checkNext(String fontName, int i) async {
-    // if it is first font, then render instantly
-    if (i == 0) return Future.value(fontName);
-
+  Future<String> checkNext(String fontName) async {
     await Future.delayed(Duration(milliseconds: 400));
 
     if (_areGoogleFontsRendered()) {
-      final fontConfidence = _calcCzechFontConfidence();
+      final fontConfidence = _calcCzechFontConfidence(fontName);
+      print(fontConfidence == Confidence.UNKWN
+          ? '>>>>>>>>>>>>>>> $fontConfidence'
+          : '> $fontConfidence');
+
       fontBloc.addCzechFont(
         CzechFont(fontName: fontName, confidence: fontConfidence),
       );
@@ -77,7 +78,11 @@ class _FontValidationPageState extends State<FontValidationPage> {
     }
 
     if (_areGoogleFontsRendered()) {
-      final fontConfidence = _calcCzechFontConfidence();
+      final fontConfidence = _calcCzechFontConfidence(fontName);
+      print(fontConfidence == Confidence.UNKWN
+          ? '>>>>>>>>>>>>>>> $fontConfidence'
+          : '> $fontConfidence');
+
       fontBloc.addCzechFont(
         CzechFont(fontName: fontName, confidence: fontConfidence),
       );
@@ -118,7 +123,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
           final totalScanLength = widget.fonts.fontNames.length;
           final currScanLength = fontBloc.getCurrStreamLength;
 
-          if (currScanLength == 9) {
+          if (currScanLength == 4) {
             WidgetsBinding.instance.addPostFrameCallback(
               (_) => Navigator.of(context).push(
                 MaterialPageRoute(

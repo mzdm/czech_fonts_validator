@@ -17,7 +17,7 @@ bool _areGoogleFontsRendered() {
   return true;
 }
 
-Confidence _calcCzechFontConfidence() {
+Confidence _calcCzechFontConfidence(String fontName) {
   final sizeBase = _latinTextKey.currentContext.size;
   final sizeCzech = _czechTextKey.currentContext.size;
 
@@ -27,15 +27,17 @@ Confidence _calcCzechFontConfidence() {
   final czechWidth = sizeCzech.width;
   final czechHeight = sizeCzech.height;
 
+  final relativeWidthDiff = (czechWidth - baseWidth) / baseWidth;
+  final relativeHeightDiff = (czechHeight - baseHeight) / baseHeight;
+
+  print('\n$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff');
+
   // probably invisible characters
   if (baseWidth == 0 || baseHeight == 0 || czechWidth == 0 || czechHeight == 0)
     return Confidence.LOWEST;
 
   // highly probable that it is valid Czech font
   if (sizeBase == sizeCzech) return Confidence.HIGHEST;
-
-  final relativeWidthDiff = (czechWidth - baseWidth) / baseWidth;
-  final relativeHeightDiff = (czechHeight - baseHeight) / baseHeight;
 
   // very high difference, contains unknown characters
   if (relativeWidthDiff.abs() >= 1 || relativeHeightDiff.abs() >= 1)
@@ -48,8 +50,10 @@ Confidence _calcCzechFontConfidence() {
   // very unlikely that sentence in Czech will be shorter
   if (relativeWidthDiff <= -0.01) return Confidence.LOW;
 
-  if (relativeWidthDiff.abs() <= 0.009) return Confidence.HIGH;
+  if (relativeWidthDiff.abs() <= 0.021) return Confidence.MEDIUM;
+  if (relativeWidthDiff.abs() <= 0.014) return Confidence.HIGH;
   if (relativeWidthDiff.abs() <= 0.005) return Confidence.HIGHEST;
 
-  return Confidence.LOWEST;
+  // print('>$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff  ${(_latinTextKey.currentContext?.widget as Text)?.style.toString()}');
+  return Confidence.UNKWN;
 }
