@@ -78,6 +78,12 @@ class _FontValidationPageState extends State<FontValidationPage> {
   }
 
   @override
+  void dispose() {
+    fontBloc.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
