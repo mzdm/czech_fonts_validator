@@ -129,20 +129,9 @@ class _ResultPageState extends State<ResultPage> {
                                 ),
                               ),
                               SizedBox(height: 10.0),
-                              Text(
-                                baseTestPhrase,
-                                style: getFontTextStyle(
-                                  item.fontName,
-                                  fontSize: 26.0,
-                                ),
-                              ),
-                              Text(
-                                czechTestPhrase,
-                                style: getFontTextStyle(
-                                  item.fontName,
-                                  fontSize: 26.0,
-                                ),
-                              ),
+                              displayComparisonText(baseTestPhrase, item),
+                              displayComparisonText(czechTestPhrase, item),
+                              // displayComparisonText(czechTestPhraseFull, item),
                             ],
                           ),
                         );
@@ -154,6 +143,13 @@ class _ResultPageState extends State<ResultPage> {
           },
         );
       },
+    );
+  }
+
+  Text displayComparisonText(String phrase, CzechFont font) {
+    return Text(
+      phrase,
+      style: getFontTextStyle(font.fontName, fontSize: 26.0),
     );
   }
 }

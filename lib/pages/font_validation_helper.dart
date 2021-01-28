@@ -2,9 +2,7 @@ part of 'font_validation_page.dart';
 
 const baseTestPhrase = 'Prilis zlutoucky kun upel dabelske o';
 const czechTestPhrase = 'Příliš žlutoučký kůň úpěl dábelské ó';
-
-// const baseTestPhrase = 'Prilis zlutoucky kun upel dabelske o';
-// const czechTestPhrase = 'Příliš žluťoučký kůň úpěl ďábelské ó';
+const czechTestPhraseFull = 'Příliš žluťoučký kůň úpěl ďábelské ó';
 
 TextStyle getFontTextStyle(String fontName, {double fontSize = 18.0}) =>
     GoogleFonts.getFont(fontName).copyWith(fontSize: fontSize);
