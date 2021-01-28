@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:czech_fonts_validator/blocs/bloc.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/models/language_fonts_model.dart';
+import 'package:czech_fonts_validator/pages/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_language_fonts/google_fonts.dart';
 
@@ -107,7 +108,16 @@ class _FontValidationPageState extends State<FontValidationPage> {
           final currFontName = snapshot.data;
           final totalScanLength = widget.fonts.fontNames.length;
           final currScanLength = fontBloc.getCurrStreamLength;
-          print(currFontName);
+
+          if (currScanLength == 9) {
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ResultPage(fontBloc: fontBloc),
+                ),
+              ),
+            );
+          }
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
