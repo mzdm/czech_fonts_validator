@@ -13,15 +13,19 @@ class FontBloc {
       Rx.concat([_firstController, _secondController]);
 
   Stream<List<CzechFont>> getFilteredStream(Confidence confidence) {
-    return concatStreams.where(
-      (item) {
-        if (confidence == Confidence.ANY) return true;
-        return item.confidence == confidence;
-      },
-    ).scan(
-      (List<CzechFont> accumulated, value, index) => accumulated..add(value),
-      <CzechFont>[],
-    ).asBroadcastStream();
+    return concatStreams
+        .scan(
+          (List<CzechFont> accumulated, value, index) =>
+              accumulated..add(value),
+          <CzechFont>[],
+        )
+        .map(
+          (list) => list.where((item) {
+            if (confidence == Confidence.ANY) return true;
+            return item.confidence == confidence;
+          }).toList(),
+        )
+        .asBroadcastStream();
   }
 
   FontBloc() {
