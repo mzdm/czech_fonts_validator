@@ -130,6 +130,13 @@ class _ResultPageState extends State<ResultPage> {
                               ),
                               SizedBox(height: 10.0),
                               Text(
+                                baseTestPhrase,
+                                style: getFontTextStyle(
+                                  item.fontName,
+                                  fontSize: 26.0,
+                                ),
+                              ),
+                              Text(
                                 czechTestPhrase,
                                 style: getFontTextStyle(
                                   item.fontName,
