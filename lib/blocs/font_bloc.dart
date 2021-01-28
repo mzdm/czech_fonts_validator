@@ -29,9 +29,7 @@ class FontBloc {
   }
 
   FontBloc() {
-    _firstController.listen((value) {
-      // print('listen: ${value.toString()}');
-    });
+    // TODO: refactor heavy ReplaySubject with BehaviorSubject
   }
 
   void addCzechFont(CzechFont font) {
