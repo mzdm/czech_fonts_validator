@@ -4,13 +4,18 @@ import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FontBloc {
-  final ReplaySubject<CzechFont> _firstController = ReplaySubject();
-  final ReplaySubject<CzechFont> _secondController = ReplaySubject();
+  final ReplaySubject<CzechFont> _firstBatch = ReplaySubject();
+  final ReplaySubject<CzechFont> _secondBatch = ReplaySubject();
+  final ReplaySubject<CzechFont> _thirdBatch = ReplaySubject();
 
-  final BehaviorSubject<int> _length = BehaviorSubject.seeded(0);
+  final BehaviorSubject<int> _scan = BehaviorSubject.seeded(0);
+
+  var _scanCounter = 0;
+
+  int get getCurrScanCounter => _scan.value;
 
   Stream<CzechFont> get concatStreams =>
-      Rx.concat([_firstController, _secondController]);
+      Rx.concat([_firstBatch, _secondBatch, _thirdBatch]);
 
   Stream<List<CzechFont>> getFilteredStream(Confidence confidence) {
     return concatStreams
@@ -33,15 +38,14 @@ class FontBloc {
   }
 
   void addCzechFont(CzechFont font) {
-    _length.add(++_length.value);
-    _firstController.add(font);
+    _scan.add(++_scanCounter);
+    _firstBatch.add(font);
   }
 
-  int get getCurrStreamLength => _length.value;
-
   void dispose() {
-    _firstController.close();
-    _secondController.close();
-    _length.close();
+    _firstBatch.close();
+    _secondBatch.close();
+    _thirdBatch.close();
+    _scan.close();
   }
 }

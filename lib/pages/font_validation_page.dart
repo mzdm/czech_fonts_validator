@@ -121,9 +121,9 @@ class _FontValidationPageState extends State<FontValidationPage> {
         if (snapshot.hasData) {
           final currFontName = snapshot.data;
           final totalScanLength = widget.fonts.fontNames.length;
-          final currScanLength = fontBloc.getCurrStreamLength;
+          final currScanCounter = fontBloc.getCurrScanCounter;
 
-          if (currScanLength == 4) {
+          if (currScanCounter == 4) {
             WidgetsBinding.instance.addPostFrameCallback(
               (_) => Navigator.of(context).push(
                 MaterialPageRoute(
@@ -137,7 +137,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                '$currScanLength/$totalScanLength',
+                '$currScanCounter/$totalScanLength',
               ),
               Text(
                 baseTestPhrase,
