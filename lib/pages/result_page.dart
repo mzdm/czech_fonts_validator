@@ -1,4 +1,4 @@
-import 'package:czech_fonts_validator/blocs/bloc.dart';
+import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/pages/font_validation_page.dart';
 import 'package:flutter/material.dart';

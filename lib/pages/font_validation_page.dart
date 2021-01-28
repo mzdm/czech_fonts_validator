@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:czech_fonts_validator/blocs/bloc.dart';
+import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/models/language_fonts_model.dart';
 import 'package:czech_fonts_validator/pages/result_page.dart';
