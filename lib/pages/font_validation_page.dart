@@ -32,11 +32,20 @@ class _FontValidationPageState extends State<FontValidationPage> {
 
   Stream<String> _streamData() async* {
     // final streamData = Stream.fromIterable(widget.fonts.fontNames);
-    final fontNamesList = widget.fonts.fontNames.getRange(0, 10).toList();
-    fontNamesList.insert(0, fontNamesList[0]);
+    final fontNamesList = widget.fonts.fontNames.take(10).toList();
 
+    var rendered = false;
     for (var i = 0; i < fontNamesList.length; i++) {
-      yield await checkNext(fontNamesList[i], i);
+      // render font, then check sizes
+      if (!rendered) {
+        yield fontNamesList[i];
+        rendered = true;
+        --i;
+        continue;
+      }
+
+      rendered = false;
+      yield await checkNext(fontNamesList[i]);
     }
   }
 
