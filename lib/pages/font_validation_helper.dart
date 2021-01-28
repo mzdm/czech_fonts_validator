@@ -46,11 +46,13 @@ Confidence _calcCzechFontConfidence(String fontName) {
     return Confidence.MEDIUM;
 
   // very unlikely that sentence in Czech will be shorter
-  if (relativeWidthDiff <= -0.01) return Confidence.LOW;
+  if (relativeWidthDiff < -0.05) return Confidence.LOW;
 
-  if (relativeWidthDiff.abs() <= 0.021) return Confidence.MEDIUM;
-  if (relativeWidthDiff.abs() <= 0.014) return Confidence.HIGH;
-  if (relativeWidthDiff.abs() <= 0.005) return Confidence.HIGHEST;
+  if (relativeWidthDiff <= 0.005) return Confidence.HIGHEST;
+  if (relativeWidthDiff <= 0.014) return Confidence.HIGH;
+  if (relativeWidthDiff <= 0.023) return Confidence.MEDIUM;
+  if (relativeWidthDiff <= 0.05) return Confidence.LOW;
+  if (relativeWidthDiff <= 0.09) return Confidence.LOWEST;
 
   // print('>$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff  ${(_latinTextKey.currentContext?.widget as Text)?.style.toString()}');
   return Confidence.UNKWN;
