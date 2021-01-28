@@ -1,8 +1,9 @@
-import 'package:czech_fonts_validator/src/font_validation_page.dart';
-import 'package:czech_fonts_validator/src/language_fonts_model.dart';
-import 'package:czech_fonts_validator/src/service.dart';
+import 'package:czech_fonts_validator/pages/font_validation_page.dart';
+import 'package:czech_fonts_validator/service/service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import 'models/language_fonts_model.dart';
 
 void main() => runApp(MyApp());
 

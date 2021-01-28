@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:czech_fonts_validator/src/czech_font_model.dart';
-import 'package:czech_fonts_validator/src/language_fonts_model.dart';
+import 'package:czech_fonts_validator/models/czech_font_model.dart';
+import 'package:czech_fonts_validator/models/language_fonts_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_language_fonts/google_fonts.dart';
 

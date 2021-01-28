@@ -1,9 +1,8 @@
 import 'dart:convert';
 
+import 'package:czech_fonts_validator/models/language_fonts_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-
-import 'language_fonts_model.dart';
 
 class Service {
   const Service({
