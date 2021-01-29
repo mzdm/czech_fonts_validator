@@ -232,6 +232,10 @@ class _FontValidationPageState extends State<FontValidationPage> {
           );
         }
 
+        if (snapshot.hasError) {
+          return Text('');
+        }
+
         return Text('Loading ...');
       },
     );
