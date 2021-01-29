@@ -14,7 +14,6 @@ class FontBloc {
   var _scanCounter = 0;
   final BehaviorSubject<int> _scan = BehaviorSubject.seeded(0);
 
-
   FontBloc() {
     scanCounter = _scan.stream;
     // TODO: refactor heavy ReplaySubject with BehaviorSubject
@@ -26,8 +25,7 @@ class FontBloc {
   Stream<List<CzechFont>> getFilteredStream(Confidence confidence) {
     return concatStreams
         .scan(
-          (List<CzechFont> accumulated, value, index) =>
-              accumulated..add(value),
+          (List<CzechFont> acc, value, index) => acc..add(value),
           <CzechFont>[],
         )
         .map(
