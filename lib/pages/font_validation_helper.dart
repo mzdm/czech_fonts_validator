@@ -28,7 +28,9 @@ Confidence _calcCzechFontConfidence(String fontName) {
   final relativeWidthDiff = (czechWidth - baseWidth) / baseWidth;
   final relativeHeightDiff = (czechHeight - baseHeight) / baseHeight;
 
-  print('\n$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff');
+  print(
+    '\n$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff  ${(getGlobalKey(scanBatch).currentContext?.widget as Text)?.style?.fontFamily}',
+  );
 
   // probably invisible characters
   if (baseWidth == 0 || baseHeight == 0 || czechWidth == 0 || czechHeight == 0)
@@ -38,22 +40,24 @@ Confidence _calcCzechFontConfidence(String fontName) {
   if (sizeBase == sizeCzech) return Confidence.HIGHEST;
 
   // very high difference, contains unknown characters
-  if (relativeWidthDiff.abs() >= 1 || relativeHeightDiff.abs() >= 1)
+  if (relativeWidthDiff.abs() >= 0.5 || relativeHeightDiff.abs() >= 0.5)
     return Confidence.LOWEST;
-  if (relativeWidthDiff.abs() > 0.5 || relativeHeightDiff.abs() >= 0.5)
-    return Confidence.LOW;
-  if (relativeWidthDiff.abs() > 0.35 || relativeHeightDiff.abs() >= 0.35)
-    return Confidence.MEDIUM;
+  if (relativeHeightDiff.abs() >= 0.35) return Confidence.LOW;
 
-  // very unlikely that sentence in Czech will be shorter
-  if (relativeWidthDiff < -0.05) return Confidence.LOW;
+  // very unlikely that sentence in Czech will be shorter or smaller
+  if (relativeWidthDiff < -0.1) return Confidence.LOWEST;
+  if (relativeWidthDiff < -0.007) return Confidence.LOW;
+  if (relativeWidthDiff < -0.005) return Confidence.MEDIUM;
+
+  // very unlikely that sentence in Czech will be smaller
+  if (relativeHeightDiff < -0.5) return Confidence.LOWEST;
+  if (relativeHeightDiff < -0.05) return Confidence.LOW;
 
   if (relativeWidthDiff <= 0.005) return Confidence.HIGHEST;
-  if (relativeWidthDiff <= 0.014) return Confidence.HIGH;
-  if (relativeWidthDiff <= 0.023) return Confidence.MEDIUM;
+  if (relativeWidthDiff <= 0.008) return Confidence.HIGH;
+  if (relativeWidthDiff <= 0.01) return Confidence.MEDIUM;
   if (relativeWidthDiff <= 0.05) return Confidence.LOW;
   if (relativeWidthDiff <= 0.09) return Confidence.LOWEST;
 
-  // print('>$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff  ${(_latinTextKey.currentContext?.widget as Text)?.style.toString()}');
   return Confidence.UNKWN;
 }
