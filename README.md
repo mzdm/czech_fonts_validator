@@ -2,6 +2,8 @@
 
 An **experimental** Flutter app which validates Czech fonts.
 
+[Static Web App Preview](https://gray-meadow-0950e7203.azurestaticapps.net/)
+
 ### Usages in
 - [google_language_fonts](https://pub.dev/packages/google_language_fonts) Flutter package
 - []()
@@ -23,4 +25,4 @@ This app renders both Latin Extended and Czech test phrase and then calculates t
 
 Confidence HIGHEST means that the font most certainly supports all letters from the Czech alphabet. On the other side, LOWEST means that the font contains unsupported characters.
 
-If you have any notes or an improvement feel free to post an [issue](https://github.com/mzdm/google-language-fonts-flutter) or straight up PR.
+If you have any notes or an improvement feel free to post an [issue](https://github.com/mzdm/czech_fonts_validator/issues/new/choose) or straight up PR.
