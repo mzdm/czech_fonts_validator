@@ -18,9 +18,13 @@ class ResultPage extends StatefulWidget {
 class _ResultPageState extends State<ResultPage> {
   final selectedFilter = new ValueNotifier<Confidence>(Confidence.UNKWN);
 
+  Confidence get filterState => selectedFilter?.value;
+
+  void changeFilterState(Confidence newVal) => selectedFilter?.value = newVal;
+
   static const drawerMenuActions = <String>{
-    'Copy plain data',
-    'Download as JSON',
+    'Copy plain fonts with high conf.',
+    'Download all as JSON',
   };
 
   void _drawerMenu(String value) {
@@ -41,54 +45,66 @@ class _ResultPageState extends State<ResultPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(),
+      appBar: AppBar(
+        title: Text('Results'),
+        actions: <Widget>[
+          TextButton(
+            child: Text(
+              'Source Code',
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () {},
+          ),
+          SizedBox(width: 15.0),
+          buildFilterPopupMenu(),
+          SizedBox(width: 7.0),
+          buildPopupMenu(),
+        ],
+      ),
       body: buildListStream(),
     );
   }
 
-  AppBar buildAppBar() {
-    return AppBar(
-      title: Text('Results'),
-      actions: <Widget>[
-        PopupMenuButton<Confidence>(
-          icon: Icon(Icons.filter_alt),
-          itemBuilder: (context) {
-            return List<PopupMenuEntry<Confidence>>.generate(
-              Confidence.values.length,
-              (index) {
-                return PopupMenuItem(
-                  value: Confidence.values[index],
-                  child: AnimatedBuilder(
-                    child: Text(Confidence.values[index].toString()),
-                    animation: selectedFilter,
-                    builder: (context, child) {
-                      return RadioListTile<Confidence>(
-                        value: Confidence.values[index],
-                        groupValue: selectedFilter.value,
-                        title: child,
-                        onChanged: (newVal) => selectedFilter.value = newVal,
-                      );
-                    },
-                  ),
-                );
-              },
+  PopupMenuButton<Confidence> buildFilterPopupMenu() {
+    return PopupMenuButton<Confidence>(
+      icon: Icon(Icons.filter_alt),
+      itemBuilder: (context) {
+        return List<PopupMenuEntry<Confidence>>.generate(
+          Confidence.values.length,
+          (index) {
+            return PopupMenuItem(
+              value: Confidence.values[index],
+              child: AnimatedBuilder(
+                child: Text(Confidence.values[index].toString()),
+                animation: selectedFilter,
+                builder: (_, child) {
+                  return RadioListTile<Confidence>(
+                    value: Confidence.values[index],
+                    groupValue: filterState,
+                    title: child,
+                    onChanged: changeFilterState,
+                  );
+                },
+              ),
             );
           },
-        ),
-        SizedBox(width: 7.0),
-        PopupMenuButton<String>(
-          icon: Icon(Icons.menu),
-          onSelected: _drawerMenu,
-          itemBuilder: (context) => drawerMenuActions.map(
-            (menuAction) {
-              return PopupMenuItem<String>(
-                value: menuAction,
-                child: Text(menuAction),
-              );
-            },
-          ).toList(),
-        ),
-      ],
+        );
+      },
+    );
+  }
+
+  PopupMenuButton<String> buildPopupMenu() {
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.menu),
+      onSelected: _drawerMenu,
+      itemBuilder: (_) => drawerMenuActions.map(
+        (menuAction) {
+          return PopupMenuItem<String>(
+            value: menuAction,
+            child: Text(menuAction),
+          );
+        },
+      ).toList(),
     );
   }
 
