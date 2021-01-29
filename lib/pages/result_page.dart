@@ -1,6 +1,7 @@
 import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
+import 'package:czech_fonts_validator/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 const _drawerMenuActions = <String>{
@@ -50,7 +51,7 @@ class _ResultPageState extends State<ResultPage> {
       appBar: AppBar(
         title: Text('Results'),
         actions: <Widget>[
-          buildSrcButton(),
+          buildSrcTextButton(context),
           SizedBox(width: 20.0),
           buildFilterPopupMenu(),
           SizedBox(width: 10.0),
@@ -61,9 +62,9 @@ class _ResultPageState extends State<ResultPage> {
     );
   }
 
-  Widget buildSrcButton() {
+  Widget buildSrcTextButton(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () => Utils.launchUrl(context),
       child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 7.0),
