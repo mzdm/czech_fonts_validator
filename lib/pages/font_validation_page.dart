@@ -6,6 +6,7 @@ import 'package:czech_fonts_validator/models/language_fonts_model.dart';
 import 'package:czech_fonts_validator/pages/result_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_language_fonts/google_fonts.dart';
 
 part 'font_validation_helper.dart';
@@ -44,12 +45,33 @@ class _FontValidationPageState extends State<FontValidationPage> {
   void initState() {
     fontBloc = FontBloc();
     shouldValidate.addListener(() {
-      if (!shouldValidate.value) {
+      if (!validationState) {
         fontBloc?.dispose();
         fontBloc = FontBloc();
+        attachCounterListener();
       }
     });
+    attachCounterListener();
     super.initState();
+  }
+
+  void attachCounterListener() {
+    fontBloc.scanCounter.listen((state) {
+      print(state);
+      final totalScanLength = widget.fonts.fontNames.length;
+      if (state > 10) {
+        fontBloc.dispose();
+        SchedulerBinding.instance.addPostFrameCallback(
+          (_) {
+            return Navigator.of(context)
+                .push(MaterialPageRoute(
+                  builder: (_) => ResultPage(fontBloc: fontBloc),
+                ))
+                .whenComplete(() => shouldValidate?.value = false);
+          },
+        );
+      }
+    });
   }
 
   Stream<String> _streamData(ScanBatch scanBatch) async* {
@@ -79,13 +101,6 @@ class _FontValidationPageState extends State<FontValidationPage> {
 
       rendered = false;
       yield await checkNext(scanBatch, fontNamesList[i]);
-      // final validated = await checkNext(fontNamesList[i]);
-      // if (validated != null) {
-      //   yield validated;
-      // } else {
-      //   continue;
-      // }
-      // rendered = false;
     }
   }
 
@@ -166,45 +181,42 @@ class _FontValidationPageState extends State<FontValidationPage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        buildScanCounter(),
+        SizedBox(height: 75.0),
         for (final scanBatch in ScanBatch.values)
           Padding(
             padding: const EdgeInsets.only(bottom: 50.0),
-            child: buildStreamBuilder(scanBatch),
+            child: buildFontValidator(scanBatch),
           ),
       ],
     );
   }
 
-  StreamBuilder<String> buildStreamBuilder(ScanBatch scanBatch) {
+  StreamBuilder<int> buildScanCounter() {
+    return StreamBuilder<int>(
+      stream: fontBloc.scanCounter,
+      builder: (_, snapshot) {
+        if (snapshot.hasData) {
+          final totalScanLength = widget.fonts.fontNames.length;
+          final currScanCounter = snapshot.data;
+          return Text('$currScanCounter/$totalScanLength');
+        }
+
+        return Text('0/0');
+      },
+    );
+  }
+
+  StreamBuilder<String> buildFontValidator(ScanBatch scanBatch) {
     return StreamBuilder<String>(
       stream: _streamData(scanBatch),
       builder: (_, snapshot) {
         if (snapshot.hasData) {
           final currFontName = snapshot.data;
-          final totalScanLength = widget.fonts.fontNames.length;
-          final currScanCounter = fontBloc.getCurrScanCounter;
-
-          // TODO: move to another StreamBuilder
-          if (currScanCounter > 25) {
-            WidgetsBinding.instance.addPostFrameCallback(
-              (_) {
-                fontBloc.dispose();
-                return Navigator.of(context)
-                    .push(MaterialPageRoute(
-                      builder: (_) => ResultPage(fontBloc: fontBloc),
-                    ))
-                    .whenComplete(() => shouldValidate?.value = false);
-              },
-            );
-          }
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              if (scanBatch == ScanBatch.FIRST)
-                Text(
-                  '$currScanCounter/$totalScanLength',
-                ),
               Text(
                 baseTestPhrase,
                 key: getGlobalKey(scanBatch),

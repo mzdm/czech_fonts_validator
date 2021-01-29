@@ -10,11 +10,15 @@ class FontBloc {
   final ReplaySubject<CzechFont> _secondBatch = ReplaySubject();
   final ReplaySubject<CzechFont> _thirdBatch = ReplaySubject();
 
+  Stream<int> scanCounter;
+  var _scanCounter = 0;
   final BehaviorSubject<int> _scan = BehaviorSubject.seeded(0);
 
-  var _scanCounter = 0;
 
-  int get getCurrScanCounter => _scan.value;
+  FontBloc() {
+    scanCounter = _scan.stream;
+    // TODO: refactor heavy ReplaySubject with BehaviorSubject
+  }
 
   Stream<CzechFont> get concatStreams =>
       Rx.concat([_firstBatch, _secondBatch, _thirdBatch]);
@@ -33,10 +37,6 @@ class FontBloc {
           }).toList(),
         )
         .asBroadcastStream();
-  }
-
-  FontBloc() {
-    // TODO: refactor heavy ReplaySubject with BehaviorSubject
   }
 
   void addCzechFont(CzechFont font) {
