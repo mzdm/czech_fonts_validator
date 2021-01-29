@@ -86,20 +86,19 @@ class ValidationHelper {
     if (sizeBase == sizeCzech) return Confidence.HIGHEST;
 
     // very high difference, contains unknown characters
-    if (relativeWidthDiff.abs() >= 0.5 || relativeHeightDiff.abs() >= 0.5)
-      return Confidence.LOWEST;
-    if (relativeHeightDiff.abs() >= 0.35) return Confidence.LOW;
+    if (relativeHeightDiff.abs() >= 0.4) return Confidence.LOWEST;
+    if (relativeWidthDiff.abs() >= 0.2) return Confidence.LOWEST;
 
     // very unlikely that sentence in Czech will be shorter or smaller
-    if (relativeWidthDiff < -0.1) return Confidence.LOWEST;
-    if (relativeWidthDiff < -0.007) return Confidence.LOW;
-    if (relativeWidthDiff < -0.005) return Confidence.MEDIUM;
+    if (relativeWidthDiff < -0.01) return Confidence.LOWEST;
+    if (relativeWidthDiff < -0.006) return Confidence.LOW;
+    if (relativeWidthDiff < -0.004) return Confidence.MEDIUM;
 
     // very unlikely that sentence in Czech will be smaller
     if (relativeHeightDiff < -0.5) return Confidence.LOWEST;
     if (relativeHeightDiff < -0.05) return Confidence.LOW;
 
-    if (relativeWidthDiff <= 0.005) return Confidence.HIGHEST;
+    if (relativeWidthDiff <= 0.0032) return Confidence.HIGHEST;
     if (relativeWidthDiff <= 0.008) return Confidence.HIGH;
     if (relativeWidthDiff <= 0.01) return Confidence.MEDIUM;
     if (relativeWidthDiff <= 0.05) return Confidence.LOW;
