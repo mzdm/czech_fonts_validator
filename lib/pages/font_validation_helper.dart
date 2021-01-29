@@ -52,9 +52,11 @@ Confidence _calcCzechFontConfidence(ScanBatch scanBatch, [String fontName]) {
   final relativeWidthDiff = (czechWidth - baseWidth) / baseWidth;
   final relativeHeightDiff = (czechHeight - baseHeight) / baseHeight;
 
-  print(
-    '\n$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff  ${(getGlobalKey(scanBatch).currentContext?.widget as Text)?.style?.fontFamily}',
-  );
+  if (fontName != null) {
+    print(
+      '\n$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff  ${(getGlobalKey(scanBatch).currentContext?.widget as Text)?.style?.fontFamily}',
+    );
+  }
 
   // probably invisible characters
   if (baseWidth == 0 || baseHeight == 0 || czechWidth == 0 || czechHeight == 0)

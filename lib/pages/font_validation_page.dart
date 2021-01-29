@@ -108,8 +108,8 @@ class _FontValidationPageState extends State<FontValidationPage> {
     await Future.delayed(Duration(milliseconds: 200));
 
     int recheckDuration = 256;
-    while (!_areGoogleFontsRendered(scanBatch) &&
-        _calcCzechFontConfidence(scanBatch) != null) {
+    while (!_areGoogleFontsRendered(scanBatch) ||
+        _calcCzechFontConfidence(scanBatch) == null) {
       if (!validationState) return Future.value(null);
 
       await Future.delayed(Duration(milliseconds: recheckDuration));
@@ -123,17 +123,13 @@ class _FontValidationPageState extends State<FontValidationPage> {
       }
     }
 
-    if (_areGoogleFontsRendered(scanBatch)) {
-      final confidence = _calcCzechFontConfidence(scanBatch, fontName);
-      print('> $confidence');
+    final confidence = _calcCzechFontConfidence(scanBatch, fontName);
+    print('> $confidence');
 
-      fontBloc.addCzechFont(
-        CzechFont(fontName: fontName, confidence: confidence),
-      );
-      return Future.value(fontName);
-    }
-
-    return null;
+    fontBloc.addCzechFont(
+      CzechFont(fontName: fontName, confidence: confidence),
+    );
+    return Future.value(fontName);
   }
 
   @override
