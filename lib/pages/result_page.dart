@@ -51,20 +51,26 @@ class _ResultPageState extends State<ResultPage> {
       appBar: AppBar(
         title: Text('Results'),
         actions: <Widget>[
-          TextButton(
-            child: Text(
-              'Source Code',
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () {},
-          ),
-          SizedBox(width: 15.0),
+          buildSrcButton(),
+          SizedBox(width: 20.0),
           buildFilterPopupMenu(),
-          SizedBox(width: 7.0),
+          SizedBox(width: 10.0),
           buildPopupMenu(),
         ],
       ),
       body: buildListStream(),
+    );
+  }
+
+  Widget buildSrcButton() {
+    return InkWell(
+      child: Center(
+        child: Text(
+          'SOURCE CODE',
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
+      ),
+      onTap: () {},
     );
   }
 
