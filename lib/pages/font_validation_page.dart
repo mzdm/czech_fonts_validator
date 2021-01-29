@@ -1,24 +1,12 @@
 import 'dart:async';
 
 import 'package:czech_fonts_validator/blocs/font_bloc.dart';
+import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/models/language_fonts_model.dart';
 import 'package:czech_fonts_validator/pages/result_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_language_fonts/google_fonts.dart';
-
-part 'font_validation_helper.dart';
-
-final _czechTextKey = GlobalKey(debugLabel: 'czechTextKey');
-final _latinTextKey = GlobalKey(debugLabel: 'latinTextKey');
-
-final _czechTextKey2 = GlobalKey(debugLabel: 'czechTextKey2');
-final _latinTextKey2 = GlobalKey(debugLabel: 'latinTextKey2');
-
-final _czechTextKey3 = GlobalKey(debugLabel: 'czechTextKey3');
-final _latinTextKey3 = GlobalKey(debugLabel: 'latinTextKey3');
 
 class FontValidationPage extends StatefulWidget {
   const FontValidationPage({
@@ -59,7 +47,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
     fontBloc.scanCounter.listen((state) {
       print(state);
       final totalScanLength = widget.fonts.fontNames.length;
-      if (state > 10) {
+      if (state >= 50) {
         fontBloc.dispose();
         SchedulerBinding.instance.addPostFrameCallback(
           (_) {
@@ -105,11 +93,13 @@ class _FontValidationPageState extends State<FontValidationPage> {
   }
 
   Future<String> checkNext(ScanBatch scanBatch, String fontName) async {
+    final valHelper = ValidationHelper();
+
     await Future.delayed(Duration(milliseconds: 200));
 
     int recheckDuration = 256;
-    while (!_areGoogleFontsRendered(scanBatch) ||
-        _calcCzechFontConfidence(scanBatch) == null) {
+    while (!valHelper.areGoogleFontsRendered(scanBatch) ||
+        valHelper.calcCzechFontConfidence(scanBatch) == null) {
       if (!validationState) return Future.value(null);
 
       await Future.delayed(Duration(milliseconds: recheckDuration));
@@ -123,7 +113,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
       }
     }
 
-    final confidence = _calcCzechFontConfidence(scanBatch, fontName);
+    final confidence = valHelper.calcCzechFontConfidence(scanBatch, fontName);
     print('> $confidence');
 
     fontBloc.addCzechFont(
@@ -191,6 +181,8 @@ class _FontValidationPageState extends State<FontValidationPage> {
   }
 
   StreamBuilder<String> buildFontValidator(ScanBatch scanBatch) {
+    final valHelper = ValidationHelper();
+
     return StreamBuilder<String>(
       stream: _streamData(scanBatch),
       builder: (_, snapshot) {
@@ -201,15 +193,15 @@ class _FontValidationPageState extends State<FontValidationPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                baseTestPhrase,
-                key: getGlobalKey(scanBatch),
-                style: getFontTextStyle(currFontName),
+                ValidationHelper.latinPhrase,
+                key: valHelper.getGlobalKey(scanBatch),
+                style: valHelper.getFontTextStyle(currFontName),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
               Text(
-                czechTestPhrase,
-                key: getGlobalKey(scanBatch, isLatin: false),
-                style: getFontTextStyle(currFontName),
+                ValidationHelper.czechPhrase,
+                key: valHelper.getGlobalKey(scanBatch, isLatin: false),
+                style: valHelper.getFontTextStyle(currFontName),
               ),
             ],
           );

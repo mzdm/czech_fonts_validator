@@ -1,4 +1,5 @@
 import 'package:czech_fonts_validator/blocs/font_bloc.dart';
+import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/pages/font_validation_page.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,8 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> {
+  final ValidationHelper valHelper = ValidationHelper();
+
   final selectedFilter = new ValueNotifier<Confidence>(Confidence.UNKWN);
 
   Confidence get filterState => selectedFilter?.value;
@@ -146,9 +149,9 @@ class _ResultPageState extends State<ResultPage> {
                                 ),
                               ),
                               SizedBox(height: 10.0),
-                              displayComparisonText(baseTestPhrase, item),
-                              displayComparisonText(czechTestPhrase, item),
-                              // displayComparisonText(czechTestPhraseFull, item),
+                              displayText(ValidationHelper.latinPhrase, item),
+                              displayText(ValidationHelper.czechPhrase, item),
+                              // displayText(ValidationHelper.czechPhraseFull, item),
                             ],
                           ),
                         );
@@ -163,10 +166,10 @@ class _ResultPageState extends State<ResultPage> {
     );
   }
 
-  Text displayComparisonText(String phrase, CzechFont font) {
+  Text displayText(String phrase, CzechFont font) {
     return Text(
       phrase,
-      style: getFontTextStyle(font.fontName, fontSize: 26.0),
+      style: valHelper.getFontTextStyle(font.fontName, fontSize: 26.0),
     );
   }
 }
