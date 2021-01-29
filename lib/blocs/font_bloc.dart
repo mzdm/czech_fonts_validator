@@ -34,6 +34,7 @@ class FontBloc {
             return item.confidence == confidence;
           }).toList(),
         )
+        .map((l) => l..sort((a, b) => a.fontName.compareTo(b.fontName)))
         .asBroadcastStream();
   }
 
