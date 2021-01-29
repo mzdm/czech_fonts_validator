@@ -33,6 +33,7 @@ class _ResultPageState extends State<ResultPage> {
 
   @override
   void dispose() {
+    selectedFilter.dispose();
     widget.fontBloc.dispose();
     super.dispose();
   }
