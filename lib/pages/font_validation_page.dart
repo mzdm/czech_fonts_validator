@@ -4,6 +4,7 @@ import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/models/language_fonts_model.dart';
 import 'package:czech_fonts_validator/pages/result_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_language_fonts/google_fonts.dart';
 
@@ -11,6 +12,12 @@ part 'font_validation_helper.dart';
 
 final _czechTextKey = GlobalKey(debugLabel: 'czechTextKey');
 final _latinTextKey = GlobalKey(debugLabel: 'latinTextKey');
+
+final _czechTextKey2 = GlobalKey(debugLabel: 'czechTextKey2');
+final _latinTextKey2 = GlobalKey(debugLabel: 'latinTextKey2');
+
+final _czechTextKey3 = GlobalKey(debugLabel: 'czechTextKey3');
+final _latinTextKey3 = GlobalKey(debugLabel: 'latinTextKey3');
 
 class FontValidationPage extends StatefulWidget {
   const FontValidationPage({
@@ -25,14 +32,40 @@ class FontValidationPage extends StatefulWidget {
 }
 
 class _FontValidationPageState extends State<FontValidationPage> {
-  final FontBloc fontBloc = FontBloc();
-
+  final shouldValidate = new ValueNotifier<bool>(false);
+  FontBloc fontBloc;
   TextStyle textStyle;
-  bool shouldValidate = false;
 
-  Stream<String> _streamData() async* {
+  bool get validationState => shouldValidate?.value;
+
+  void switchValidationState() => shouldValidate?.value = !validationState;
+
+  @override
+  void initState() {
+    fontBloc = FontBloc();
+    shouldValidate.addListener(() {
+      if (!shouldValidate.value) {
+        fontBloc?.dispose();
+        fontBloc = FontBloc();
+      }
+    });
+    super.initState();
+  }
+
+  Stream<String> _streamData(ScanBatch scanBatch) async* {
     // final streamData = Stream.fromIterable(widget.fonts.fontNames);
-    final fontNamesList = widget.fonts.fontNames.take(10).toList();
+    final fontNamesList = <String>[];
+
+    final allFontNamesList = widget.fonts.fontNames;
+    final totalSize = allFontNamesList.length;
+    final batchSize = totalSize ~/ 3;
+    if (scanBatch == ScanBatch.FIRST) {
+      fontNamesList.addAll(allFontNamesList.take(batchSize));
+    } else if (scanBatch == ScanBatch.SECOND) {
+      fontNamesList.addAll(allFontNamesList.getRange(batchSize, batchSize * 2));
+    } else {
+      fontNamesList.addAll(allFontNamesList.getRange(batchSize * 2, totalSize));
+    }
 
     var rendered = false;
     for (var i = 0; i < fontNamesList.length; i++) {
@@ -45,15 +78,22 @@ class _FontValidationPageState extends State<FontValidationPage> {
       }
 
       rendered = false;
-      yield await checkNext(fontNamesList[i]);
+      yield await checkNext(scanBatch, fontNamesList[i]);
+      // final validated = await checkNext(fontNamesList[i]);
+      // if (validated != null) {
+      //   yield validated;
+      // } else {
+      //   continue;
+      // }
+      // rendered = false;
     }
   }
 
-  Future<String> checkNext(String fontName) async {
+  Future<String> checkNext(ScanBatch scanBatch, String fontName) async {
     await Future.delayed(Duration(milliseconds: 400));
 
-    if (_areGoogleFontsRendered()) {
-      final fontConfidence = _calcCzechFontConfidence(fontName);
+    if (_areGoogleFontsRendered(scanBatch)) {
+      final fontConfidence = _calcCzechFontConfidence(scanBatch, fontName);
       print(fontConfidence == Confidence.UNKWN
           ? '>>>>>>>>>>>>>>> $fontConfidence'
           : '> $fontConfidence');
@@ -65,20 +105,22 @@ class _FontValidationPageState extends State<FontValidationPage> {
     }
 
     int recheckDuration = 125;
-    while (!_areGoogleFontsRendered()) {
+    while (!_areGoogleFontsRendered(scanBatch)) {
+      if (!validationState) return Future.value(null);
+
       await Future.delayed(Duration(milliseconds: recheckDuration));
       recheckDuration *= 2;
 
-      if (recheckDuration == 8000) {
+      if (recheckDuration == 2000) {
         print(
           'FAILED_CHECK: font \'$fontName\' was not successfully rendered in time',
         );
-        return null;
+        return Future.value(null);
       }
     }
 
-    if (_areGoogleFontsRendered()) {
-      final fontConfidence = _calcCzechFontConfidence(fontName);
+    if (_areGoogleFontsRendered(scanBatch)) {
+      final fontConfidence = _calcCzechFontConfidence(scanBatch, fontName);
       print(fontConfidence == Confidence.UNKWN
           ? '>>>>>>>>>>>>>>> $fontConfidence'
           : '> $fontConfidence');
@@ -94,60 +136,84 @@ class _FontValidationPageState extends State<FontValidationPage> {
 
   @override
   void dispose() {
+    shouldValidate.dispose();
     fontBloc.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: !shouldValidate
-            ? Text('Press [PLAY] button to start validating fonts')
-            : buildFontValidator(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => setState(() => shouldValidate = true),
-        tooltip: 'Start validating Czech fonts',
-        child: Icon(Icons.play_arrow),
-      ),
+    return ValueListenableBuilder<bool>(
+      valueListenable: shouldValidate,
+      builder: (_, value, __) {
+        return Scaffold(
+          body: Center(
+            child: !value
+                ? Text('Press [PLAY] button to start validating Czech fonts')
+                : buildFontValidators(),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: switchValidationState,
+            tooltip: value ? 'Stop validating' : 'Start validating Czech fonts',
+            child: Icon(value ? Icons.stop : Icons.play_arrow),
+          ),
+        );
+      },
     );
   }
 
-  StreamBuilder<String> buildFontValidator() {
+  Widget buildFontValidators() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (final scanBatch in ScanBatch.values)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 50.0),
+            child: buildStreamBuilder(scanBatch),
+          ),
+      ],
+    );
+  }
+
+  StreamBuilder<String> buildStreamBuilder(ScanBatch scanBatch) {
     return StreamBuilder<String>(
-      stream: _streamData(),
+      stream: _streamData(scanBatch),
       builder: (_, snapshot) {
         if (snapshot.hasData) {
           final currFontName = snapshot.data;
           final totalScanLength = widget.fonts.fontNames.length;
           final currScanCounter = fontBloc.getCurrScanCounter;
 
-          if (currScanCounter == 4) {
+          // TODO: move to another StreamBuilder
+          if (currScanCounter > 25) {
             WidgetsBinding.instance.addPostFrameCallback(
-              (_) => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ResultPage(fontBloc: fontBloc),
-                ),
-              ),
+              (_) {
+                fontBloc.dispose();
+                return Navigator.of(context)
+                    .push(MaterialPageRoute(
+                      builder: (_) => ResultPage(fontBloc: fontBloc),
+                    ))
+                    .whenComplete(() => shouldValidate?.value = false);
+              },
             );
           }
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                '$currScanCounter/$totalScanLength',
-              ),
+              if (scanBatch == ScanBatch.FIRST)
+                Text(
+                  '$currScanCounter/$totalScanLength',
+                ),
               Text(
                 baseTestPhrase,
-                key: _latinTextKey,
+                key: getGlobalKey(scanBatch),
                 style: getFontTextStyle(currFontName),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
               Text(
                 czechTestPhrase,
-                key: _czechTextKey,
+                key: getGlobalKey(scanBatch, isLatin: false),
                 style: getFontTextStyle(currFontName),
               ),
             ],

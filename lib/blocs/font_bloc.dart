@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:rxdart/rxdart.dart';
 
+enum ScanBatch { FIRST, SECOND, THIRD }
+
 class FontBloc {
   final ReplaySubject<CzechFont> _firstBatch = ReplaySubject();
   final ReplaySubject<CzechFont> _secondBatch = ReplaySubject();
