@@ -32,9 +32,17 @@ bool _areGoogleFontsRendered(ScanBatch scanBatch) {
   return true;
 }
 
-Confidence _calcCzechFontConfidence(ScanBatch scanBatch, String fontName) {
-  final sizeBase = getGlobalKey(scanBatch).currentContext.size;
-  final sizeCzech = getGlobalKey(scanBatch, isLatin: false).currentContext.size;
+Confidence _calcCzechFontConfidence(ScanBatch scanBatch, [String fontName]) {
+  Size sizeBase;
+  Size sizeCzech;
+
+  try {
+    sizeBase = getGlobalKey(scanBatch).currentContext?.size;
+    sizeCzech = getGlobalKey(scanBatch, isLatin: false).currentContext?.size;
+  } catch (e) {
+    print(e);
+    return null;
+  }
 
   final baseWidth = sizeBase.width;
   final baseHeight = sizeBase.height;

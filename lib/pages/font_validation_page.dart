@@ -120,7 +120,8 @@ class _FontValidationPageState extends State<FontValidationPage> {
     }
 
     int recheckDuration = 125;
-    while (!_areGoogleFontsRendered(scanBatch)) {
+    while (!_areGoogleFontsRendered(scanBatch) &&
+        _calcCzechFontConfidence(scanBatch) != null) {
       if (!validationState) return Future.value(null);
 
       await Future.delayed(Duration(milliseconds: recheckDuration));
