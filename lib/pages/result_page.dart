@@ -3,6 +3,11 @@ import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:flutter/material.dart';
 
+const _drawerMenuActions = <String>{
+  'Copy plain fonts with high conf.',
+  'Download all as JSON',
+};
+
 class ResultPage extends StatefulWidget {
   final FontBloc fontBloc;
 
@@ -24,16 +29,11 @@ class _ResultPageState extends State<ResultPage> {
 
   void changeFilterState(Confidence newVal) => selectedFilter?.value = newVal;
 
-  static const drawerMenuActions = <String>{
-    'Copy plain fonts with high conf.',
-    'Download all as JSON',
-  };
-
   void _drawerMenu(String value) {
-    if (value == drawerMenuActions.elementAt(0)) {
-      print(drawerMenuActions.elementAt(0));
+    if (value == _drawerMenuActions.elementAt(0)) {
+      print(_drawerMenuActions.elementAt(0));
     } else {
-      print(drawerMenuActions.elementAt(1));
+      print(_drawerMenuActions.elementAt(1));
     }
   }
 
@@ -54,7 +54,7 @@ class _ResultPageState extends State<ResultPage> {
           SizedBox(width: 20.0),
           buildFilterPopupMenu(),
           SizedBox(width: 10.0),
-          buildPopupMenu(),
+          buildDrawerMenu(),
         ],
       ),
       body: buildListStream(),
@@ -63,31 +63,35 @@ class _ResultPageState extends State<ResultPage> {
 
   Widget buildSrcButton() {
     return InkWell(
+      onTap: () {},
       child: Center(
-        child: Text(
-          'SOURCE CODE',
-          style: TextStyle(fontWeight: FontWeight.w500),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 7.0),
+          child: Text(
+            'SOURCE CODE',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
         ),
       ),
-      onTap: () {},
     );
   }
 
   PopupMenuButton<Confidence> buildFilterPopupMenu() {
     return PopupMenuButton<Confidence>(
+      tooltip: 'Filter',
       icon: Icon(Icons.filter_alt),
-      itemBuilder: (context) {
+      itemBuilder: (_) {
         return List<PopupMenuEntry<Confidence>>.generate(
           Confidence.values.length,
-          (index) {
+          (i) {
             return PopupMenuItem(
-              value: Confidence.values[index],
+              value: Confidence.values[i],
               child: AnimatedBuilder(
-                child: Text(Confidence.values[index].toString()),
+                child: Text(Confidence.values[i].toString()),
                 animation: selectedFilter,
                 builder: (_, child) {
                   return RadioListTile<Confidence>(
-                    value: Confidence.values[index],
+                    value: Confidence.values[i],
                     groupValue: filterState,
                     title: child,
                     onChanged: changeFilterState,
@@ -101,11 +105,11 @@ class _ResultPageState extends State<ResultPage> {
     );
   }
 
-  PopupMenuButton<String> buildPopupMenu() {
+  PopupMenuButton<String> buildDrawerMenu() {
     return PopupMenuButton<String>(
       icon: Icon(Icons.menu),
       onSelected: _drawerMenu,
-      itemBuilder: (_) => drawerMenuActions.map(
+      itemBuilder: (_) => _drawerMenuActions.map(
         (menuAction) {
           return PopupMenuItem<String>(
             value: menuAction,
