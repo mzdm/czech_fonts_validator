@@ -20,7 +20,7 @@ class FontBloc {
   }
 
   Stream<CzechFont> get concatStreams =>
-      Rx.concat([_firstBatch, _secondBatch, _thirdBatch]);
+      Rx.merge([_firstBatch, _secondBatch, _thirdBatch]);
 
   Stream<List<CzechFont>> getFilteredStream(Confidence confidence) {
     return concatStreams
