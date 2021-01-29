@@ -40,7 +40,6 @@ Confidence _calcCzechFontConfidence(ScanBatch scanBatch, [String fontName]) {
     sizeBase = getGlobalKey(scanBatch).currentContext?.size;
     sizeCzech = getGlobalKey(scanBatch, isLatin: false).currentContext?.size;
   } catch (e) {
-    print(e);
     return null;
   }
 

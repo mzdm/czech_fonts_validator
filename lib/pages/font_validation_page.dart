@@ -107,19 +107,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
   Future<String> checkNext(ScanBatch scanBatch, String fontName) async {
     await Future.delayed(Duration(milliseconds: 200));
 
-    if (_areGoogleFontsRendered(scanBatch)) {
-      final fontConfidence = _calcCzechFontConfidence(scanBatch, fontName);
-      print(fontConfidence == Confidence.UNKWN
-          ? '>>>>>>>>>>>>>>> $fontConfidence'
-          : '> $fontConfidence');
-
-      fontBloc.addCzechFont(
-        CzechFont(fontName: fontName, confidence: fontConfidence),
-      );
-      return Future.value(fontName);
-    }
-
-    int recheckDuration = 125;
+    int recheckDuration = 256;
     while (!_areGoogleFontsRendered(scanBatch) &&
         _calcCzechFontConfidence(scanBatch) != null) {
       if (!validationState) return Future.value(null);
@@ -127,7 +115,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
       await Future.delayed(Duration(milliseconds: recheckDuration));
       recheckDuration *= 2;
 
-      if (recheckDuration == 2000) {
+      if (recheckDuration == 2048) {
         print(
           'FAILED_CHECK: font \'$fontName\' was not successfully rendered in time',
         );
@@ -136,13 +124,11 @@ class _FontValidationPageState extends State<FontValidationPage> {
     }
 
     if (_areGoogleFontsRendered(scanBatch)) {
-      final fontConfidence = _calcCzechFontConfidence(scanBatch, fontName);
-      print(fontConfidence == Confidence.UNKWN
-          ? '>>>>>>>>>>>>>>> $fontConfidence'
-          : '> $fontConfidence');
+      final confidence = _calcCzechFontConfidence(scanBatch, fontName);
+      print('> $confidence');
 
       fontBloc.addCzechFont(
-        CzechFont(fontName: fontName, confidence: fontConfidence),
+        CzechFont(fontName: fontName, confidence: confidence),
       );
       return Future.value(fontName);
     }
@@ -234,6 +220,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
         }
 
         if (snapshot.hasError) {
+          print(snapshot.error.toString());
           return Text('');
         }
 
