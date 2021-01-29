@@ -105,7 +105,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
   }
 
   Future<String> checkNext(ScanBatch scanBatch, String fontName) async {
-    await Future.delayed(Duration(milliseconds: 400));
+    await Future.delayed(Duration(milliseconds: 200));
 
     if (_areGoogleFontsRendered(scanBatch)) {
       final fontConfidence = _calcCzechFontConfidence(scanBatch, fontName);
