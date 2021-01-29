@@ -123,39 +123,41 @@ class _ResultPageState extends State<ResultPage> {
 
               return czechFontsList.isEmpty
                   ? Center(child: Text('No fonts found in: $value'))
-                  : ListView.separated(
-                      itemCount: czechFontsList.length,
-                      separatorBuilder: (_, __) => Divider(thickness: 2.0),
-                      itemBuilder: (_, index) {
-                        final item = czechFontsList[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Center(
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      item.fontName,
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                    SizedBox(width: 45.0),
-                                    Text(
-                                      item.confidence.toString(),
-                                      style: TextStyle(color: Colors.teal),
-                                    ),
-                                  ],
+                  : Scrollbar(
+                      child: ListView.separated(
+                        itemCount: czechFontsList.length,
+                        separatorBuilder: (_, __) => Divider(thickness: 2.0),
+                        itemBuilder: (_, index) {
+                          final item = czechFontsList[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        item.fontName,
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      SizedBox(width: 45.0),
+                                      Text(
+                                        item.confidence.toString(),
+                                        style: TextStyle(color: Colors.teal),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 10.0),
-                              displayText(ValidationHelper.latinPhrase, item),
-                              displayText(ValidationHelper.czechPhrase, item),
-                              // displayText(ValidationHelper.czechPhraseFull, item),
-                            ],
-                          ),
-                        );
-                      },
+                                SizedBox(height: 10.0),
+                                displayText(ValidationHelper.latinPhrase, item),
+                                displayText(ValidationHelper.czechPhrase, item),
+                                // displayText(ValidationHelper.czechPhraseFull, item),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     );
             }
 
