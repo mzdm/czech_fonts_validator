@@ -1,7 +1,6 @@
 import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
-import 'package:czech_fonts_validator/pages/font_validation_page.dart';
 import 'package:flutter/material.dart';
 
 class ResultPage extends StatefulWidget {
@@ -120,7 +119,7 @@ class _ResultPageState extends State<ResultPage> {
   Widget buildListStream() {
     return ValueListenableBuilder<Confidence>(
       valueListenable: selectedFilter,
-      builder: (context, value, child) {
+      builder: (_, value, __) {
         return StreamBuilder<List<CzechFont>>(
           stream: widget.fontBloc.getFilteredStream(value),
           builder: (_, snapshot) {
@@ -133,36 +132,7 @@ class _ResultPageState extends State<ResultPage> {
                       child: ListView.separated(
                         itemCount: czechFontsList.length,
                         separatorBuilder: (_, __) => Divider(thickness: 2.0),
-                        itemBuilder: (_, index) {
-                          final item = czechFontsList[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        item.fontName,
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                      SizedBox(width: 45.0),
-                                      Text(
-                                        item.confidence.toString(),
-                                        style: TextStyle(color: Colors.teal),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 10.0),
-                                displayText(ValidationHelper.latinPhrase, item),
-                                displayText(ValidationHelper.czechPhrase, item),
-                                // displayText(ValidationHelper.czechPhraseFull, item),
-                              ],
-                            ),
-                          );
-                        },
+                        itemBuilder: (_, i) => buildListItem(czechFontsList[i]),
                       ),
                     );
             }
@@ -174,7 +144,37 @@ class _ResultPageState extends State<ResultPage> {
     );
   }
 
-  Text displayText(String phrase, CzechFont font) {
+  Widget buildListItem(CzechFont item) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Row(
+              children: [
+                SelectableText(
+                  item.fontName,
+                  style: TextStyle(color: Colors.grey),
+                ),
+                SizedBox(width: 45.0),
+                Text(
+                  item.confidence.toString(),
+                  style: TextStyle(color: Colors.teal),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 10.0),
+          displayPhraseText(ValidationHelper.latinPhrase, item),
+          displayPhraseText(ValidationHelper.czechPhrase, item),
+          // displayText(ValidationHelper.czechPhraseFull, item),
+        ],
+      ),
+    );
+  }
+
+  Text displayPhraseText(String phrase, CzechFont font) {
     return Text(
       phrase,
       style: valHelper.getFontTextStyle(font.fontName, fontSize: 26.0),
