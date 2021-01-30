@@ -47,7 +47,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
     fontBloc.scanCounter.listen((state) {
       print(state);
       final totalScanLength = widget.fonts.fontNames.length;
-      if (state == 300) {
+      if (state == totalScanLength) {
         fontBloc.dispose();
         SchedulerBinding.instance.addPostFrameCallback(
           (_) {
@@ -63,32 +63,26 @@ class _FontValidationPageState extends State<FontValidationPage> {
   }
 
   Stream<String> _streamData(ScanBatch scanBatch) async* {
-    // final streamData = Stream.fromIterable(widget.fonts.fontNames);
     final fontNamesList = <String>[];
 
     final allFontNamesList = widget.fonts.fontNames;
     final totalSize = allFontNamesList.length;
     final batchSize = totalSize ~/ 3;
     if (scanBatch == ScanBatch.FIRST) {
-      fontNamesList.addAll(allFontNamesList.take(batchSize));
+      fontNamesList.addAll(allFontNamesList.sublist(0, batchSize));
     } else if (scanBatch == ScanBatch.SECOND) {
-      fontNamesList.addAll(allFontNamesList.getRange(batchSize, batchSize * 2));
+      fontNamesList.addAll(allFontNamesList.sublist(batchSize, batchSize * 2));
     } else {
-      fontNamesList.addAll(allFontNamesList.getRange(batchSize * 2, totalSize));
+      fontNamesList.addAll(allFontNamesList.sublist(batchSize * 2));
     }
 
-    var rendered = false;
-    for (var i = 0; i < fontNamesList.length; i++) {
-      // render font, then check sizes
-      if (!rendered) {
-        yield fontNamesList[i];
-        rendered = true;
-        --i;
-        continue;
+    for (var i = 0; i < fontNamesList.length * 2; i++) {
+      // firstly render font, then check the sizes
+      if (i % 2 == 0) {
+        yield fontNamesList[i ~/ 2];
+      } else {
+        yield await checkNext(scanBatch, fontNamesList[i ~/ 2]);
       }
-
-      rendered = false;
-      yield await checkNext(scanBatch, fontNamesList[i]);
     }
   }
 
