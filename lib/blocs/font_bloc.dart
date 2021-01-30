@@ -39,7 +39,7 @@ class FontBloc {
   }
 
   void addCzechFont(ScanBatch scanBatch, CzechFont font) {
-    _scan.add(++_scanCounter);
+    increaseScanCounter();
 
     if (scanBatch == ScanBatch.FIRST) {
       _firstBatch.add(font);
@@ -49,6 +49,8 @@ class FontBloc {
       _thirdBatch.add(font);
     }
   }
+
+  void increaseScanCounter() => _scan.add(++_scanCounter);
 
   void dispose() {
     _firstBatch.close();

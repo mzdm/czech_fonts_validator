@@ -109,6 +109,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
         print(
           'FAILED_CHECK: font \'$fontName\' was not successfully rendered in time',
         );
+        fontBloc.increaseScanCounter();
         return Future.value(null);
       }
     }
