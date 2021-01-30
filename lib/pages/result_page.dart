@@ -2,11 +2,12 @@ import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/utils/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 const _drawerMenuActions = <String>{
-  'Copy plain fonts with high conf.',
-  'Download all as JSON',
+  'Copy plain fonts in this category',
+  if (kIsWeb) 'Download all as JSON',
 };
 
 class ResultPage extends StatefulWidget {
@@ -24,7 +25,7 @@ class ResultPage extends StatefulWidget {
 class _ResultPageState extends State<ResultPage> {
   FontBloc get fontBloc => widget.fontBloc;
 
-  List<CzechFont> get currFontList => fontBloc.allValidatedFontsList;
+  List<CzechFont> get allFontsList => fontBloc.allValidatedFontsList;
 
   final selectedFilter = new ValueNotifier<Confidence>(Confidence.HIGHEST);
 
@@ -34,10 +35,11 @@ class _ResultPageState extends State<ResultPage> {
 
   void _onDrawerAction(String item) {
     if (item == _drawerMenuActions.elementAt(0)) {
-      // Copy plain fonts with HIGHEST & HIGH confidence
+      // Copy plain fonts in this Confidence category
+      Utils.copyPlainData(context, data: allFontsList, confidence: filterState);
     } else {
       // Download all as JSON
-      print(_drawerMenuActions.elementAt(1));
+      Utils.downloadDataAsJson(context, data: allFontsList);
     }
   }
 

@@ -1,5 +1,11 @@
+import 'dart:convert';
+
+import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:js' as js;
+import 'dart:html' as html;
 
 class Utils {
   static const _srcUrl = 'https://github.com/mzdm/czech_fonts_validator';
@@ -12,9 +18,46 @@ class Utils {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: Can not open the website \'$url\'.')),
-      );
+      showSnackBar(context, 'Error: Can not open the website \'$url\'.');
     }
   }
+
+  static void copyPlainData(
+    BuildContext context, {
+    @required List<CzechFont> data,
+    @required Confidence confidence,
+  }) {
+    final filtered = data
+        .where((e) {
+          if (confidence == Confidence.ANY) return true;
+          return e.confidence == confidence;
+        })
+        .map((e) => e.fontName)
+        .toList()
+        .join('\n');
+    Clipboard.setData(ClipboardData(text: filtered));
+
+    showSnackBar(
+      context,
+      'Fonts with $confidence were copied to the clipboard.',
+    );
+  }
+
+  static void downloadDataAsJson(
+    BuildContext context, {
+    @required List<CzechFont> data,
+  }) {
+    try {
+      final jsonData = jsonEncode(data.map((e) => e.toJson()).toList());
+      final utfEncoded = utf8.encode(jsonData);
+      final blob = html.Blob([utfEncoded]);
+      js.context.callMethod("webSaveAs", [blob, "czech_fonts.json"]);
+    } catch (e) {
+      print(e);
+      showSnackBar(context, e?.toString());
+    }
+  }
+
+  static void showSnackBar(BuildContext context, String text) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
 }
