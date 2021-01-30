@@ -34,23 +34,36 @@ class ValidationHelper {
   TextStyle getFontTextStyle(String fontName, {double fontSize = 18.0}) =>
       GoogleFonts.getFont(fontName).copyWith(fontSize: fontSize);
 
-  bool areGoogleFontsRendered(ScanBatch scanBatch) {
-    final valHelper = ValidationHelper();
+  List<String> getFontBatch(
+    ScanBatch scanBatch,
+    List<String> allFontNamesList,
+  ) {
+    final batchList = <String>[];
 
+    final totalSize = allFontNamesList.length;
+    final batchSize = totalSize ~/ 3;
+    if (scanBatch == ScanBatch.FIRST) {
+      batchList.addAll(allFontNamesList.sublist(0, batchSize));
+    } else if (scanBatch == ScanBatch.SECOND) {
+      batchList.addAll(allFontNamesList.sublist(batchSize, batchSize * 2));
+    } else {
+      batchList.addAll(allFontNamesList.sublist(batchSize * 2));
+    }
+    return batchList;
+  }
+
+  bool isFontRendered(ScanBatch scanBatch) {
     final styleBase =
-        (valHelper.getGlobalKey(scanBatch).currentContext?.widget as Text)
+        (getGlobalKey(scanBatch).currentContext?.widget as Text)?.style;
+    final styleCzech =
+        (getGlobalKey(scanBatch, isLatin: false).currentContext?.widget as Text)
             ?.style;
-    final styleCzech = (valHelper
-            .getGlobalKey(scanBatch, isLatin: false)
-            .currentContext
-            ?.widget as Text)
-        ?.style;
 
     if (styleBase == null || styleCzech == null) return false;
     return true;
   }
 
-  Confidence calcCzechFontConfidence(ScanBatch scanBatch, [String fontName]) {
+  Confidence calcFontConfidence(ScanBatch scanBatch, [String fontName]) {
     Size sizeBase;
     Size sizeCzech;
 

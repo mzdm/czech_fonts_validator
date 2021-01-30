@@ -23,6 +23,10 @@ class FontValidationPage extends StatefulWidget {
 class _FontValidationPageState extends State<FontValidationPage> {
   FontBloc fontBloc;
 
+  final valHelper = ValidationHelper();
+
+  List<String> get allFontNamesList => widget.fonts.fontNames;
+
   final shouldValidate = new ValueNotifier<bool>(false);
 
   bool get validationState => shouldValidate?.value;
@@ -46,9 +50,8 @@ class _FontValidationPageState extends State<FontValidationPage> {
   void attachCounterListener() {
     fontBloc.scanCounter.listen((state) {
       print(state);
-      final totalScanLength = widget.fonts.fontNames.length;
-      if (state == totalScanLength) {
-        fontBloc.dispose();
+      if (state == allFontNamesList.length) {
+        fontBloc?.dispose();
         SchedulerBinding.instance.addPostFrameCallback(
           (_) {
             return Navigator.of(context)
@@ -62,44 +65,32 @@ class _FontValidationPageState extends State<FontValidationPage> {
     });
   }
 
-  Stream<String> _streamData(ScanBatch scanBatch) async* {
-    final fontNamesList = <String>[];
-
-    final allFontNamesList = widget.fonts.fontNames;
-    final totalSize = allFontNamesList.length;
-    final batchSize = totalSize ~/ 3;
-    if (scanBatch == ScanBatch.FIRST) {
-      fontNamesList.addAll(allFontNamesList.sublist(0, batchSize));
-    } else if (scanBatch == ScanBatch.SECOND) {
-      fontNamesList.addAll(allFontNamesList.sublist(batchSize, batchSize * 2));
-    } else {
-      fontNamesList.addAll(allFontNamesList.sublist(batchSize * 2));
-    }
+  Stream<String> validationStream(ScanBatch scanBatch) async* {
+    final fontNamesList = <String>[]
+      ..addAll(valHelper.getFontBatch(scanBatch, allFontNamesList));
 
     for (var i = 0; i < fontNamesList.length * 2; i++) {
       // firstly render font, then check the sizes
       if (i % 2 == 0) {
         yield fontNamesList[i ~/ 2];
       } else {
-        yield await checkNext(scanBatch, fontNamesList[i ~/ 2]);
+        yield await validate(scanBatch, fontNamesList[i ~/ 2]);
       }
     }
   }
 
-  Future<String> checkNext(ScanBatch scanBatch, String fontName) async {
-    final valHelper = ValidationHelper();
-
+  Future<String> validate(ScanBatch scanBatch, String fontName) async {
     await Future.delayed(Duration(milliseconds: 100));
 
-    int recheckDuration = 64;
-    while (!valHelper.areGoogleFontsRendered(scanBatch) ||
-        valHelper.calcCzechFontConfidence(scanBatch) == null) {
+    int recheckDur = 64;
+    while (!valHelper.isFontRendered(scanBatch) ||
+        valHelper.calcFontConfidence(scanBatch) == null) {
       if (!validationState) return Future.value(null);
 
-      await Future.delayed(Duration(milliseconds: recheckDuration));
-      recheckDuration *= 2;
+      await Future.delayed(Duration(milliseconds: recheckDur));
+      recheckDur *= 2;
 
-      if (recheckDuration == 2048) {
+      if (recheckDur == 2048) {
         print(
           'FAILED_CHECK: font \'$fontName\' was not successfully rendered in time',
         );
@@ -108,7 +99,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
       }
     }
 
-    final confidence = valHelper.calcCzechFontConfidence(scanBatch, fontName);
+    final confidence = valHelper.calcFontConfidence(scanBatch, fontName);
     print('> $confidence');
 
     fontBloc.addCzechFont(
@@ -166,7 +157,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
       stream: fontBloc.scanCounter,
       builder: (_, snapshot) {
         if (snapshot.hasData) {
-          final totalScanLength = widget.fonts.fontNames.length;
+          final totalScanLength = allFontNamesList.length;
           final currScanCounter = snapshot.data;
           return Text('$currScanCounter/$totalScanLength');
         }
@@ -180,7 +171,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
     final valHelper = ValidationHelper();
 
     return StreamBuilder<String>(
-      stream: _streamData(scanBatch),
+      stream: validationStream(scanBatch),
       builder: (_, snapshot) {
         if (snapshot.hasData) {
           final currFontName = snapshot.data;

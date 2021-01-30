@@ -33,7 +33,7 @@ class _ResultPageState extends State<ResultPage> {
 
   void changeFilterState(Confidence newVal) => selectedFilter?.value = newVal;
 
-  void _onDrawerAction(String item) {
+  void onDrawerAction(String item) {
     if (item == _drawerMenuActions.elementAt(0)) {
       // Copy plain fonts in this Confidence category
       Utils.copyPlainData(context, data: allFontsList, confidence: filterState);
@@ -114,7 +114,7 @@ class _ResultPageState extends State<ResultPage> {
   PopupMenuButton<String> buildDrawerMenu() {
     return PopupMenuButton<String>(
       icon: Icon(Icons.menu),
-      onSelected: _onDrawerAction,
+      onSelected: onDrawerAction,
       itemBuilder: (_) => _drawerMenuActions.map(
         (value) {
           return PopupMenuItem<String>(
