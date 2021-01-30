@@ -177,8 +177,8 @@ class _ResultPageState extends State<ResultPage> {
           ),
           SizedBox(height: 10.0),
           displayPhraseText(ValidationHelper.latinPhrase, item),
-          displayPhraseText(ValidationHelper.czechPhrase, item),
-          // displayText(ValidationHelper.czechPhraseFull, item),
+          // displayPhraseText(ValidationHelper.czechPhrase, item),
+          displayPhraseText(ValidationHelper.czechPhraseFull, item),
         ],
       ),
     );
