@@ -24,7 +24,7 @@ class ResultPage extends StatefulWidget {
 class _ResultPageState extends State<ResultPage> {
   FontBloc get fontBloc => widget.fontBloc;
 
-  List<CzechFont> get currFontList => fontBloc.currFontList;
+  List<CzechFont> get currFontList => fontBloc.allValidatedFontsList;
 
   final selectedFilter = new ValueNotifier<Confidence>(Confidence.HIGHEST);
 

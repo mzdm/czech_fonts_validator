@@ -6,7 +6,7 @@ import 'package:rxdart/rxdart.dart';
 enum ScanBatch { FIRST, SECOND, THIRD }
 
 class FontBloc {
-  var currFontList = <CzechFont>[];
+  var allValidatedFontsList = <CzechFont>[];
   final ReplaySubject<CzechFont> _firstBatch = ReplaySubject();
   final ReplaySubject<CzechFont> _secondBatch = ReplaySubject();
   final ReplaySubject<CzechFont> _thirdBatch = ReplaySubject();
@@ -21,7 +21,7 @@ class FontBloc {
   }
 
   Stream<CzechFont> get concatStreams =>
-      Rx.merge([_firstBatch, _secondBatch, _thirdBatch]);
+      Rx.concat([_firstBatch, _secondBatch, _thirdBatch]);
 
   Stream<List<CzechFont>> getFilteredStream(Confidence confidence) {
     return concatStreams.scan(
@@ -29,13 +29,11 @@ class FontBloc {
       <CzechFont>[],
     ).map(
       (list) {
-        final l = list.where((item) {
+        allValidatedFontsList = List.from(list);
+        return list.where((item) {
           if (confidence == Confidence.ANY) return true;
           return item.confidence == confidence;
-        }).toList()
-          ..sort((a, b) => a.fontName.compareTo(b.fontName));
-        currFontList = List.from(l);
-        return l;
+        }).toList();
       },
     ).asBroadcastStream();
   }
