@@ -12,15 +12,24 @@ class CzechFont extends Equatable {
     @required this.confidence,
   });
 
-  factory CzechFont.fromJson(Map<String, dynamic> json) => CzechFont(
+  static CzechFont fromJson(Map<String, dynamic> json) => CzechFont(
         fontName: json['fontName'],
-        confidence: json['confidence'],
+        confidence: _getConfidenceFromJson(json['confidence']),
       );
 
   Map<String, dynamic> toJson() => {
         'fontName': fontName,
-        'confidence': confidence,
+        'confidence': describeEnum(confidence),
       };
+
+  static Confidence _getConfidenceFromJson(String val) {
+    for (final confidence in Confidence.values) {
+      if (val == describeEnum(confidence)) {
+        return confidence;
+      }
+    }
+    return Confidence.UNKWN;
+  }
 
   @override
   String toString() =>
