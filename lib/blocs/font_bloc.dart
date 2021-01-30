@@ -6,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 enum ScanBatch { FIRST, SECOND, THIRD }
 
 class FontBloc {
+  var currFontList = <CzechFont>[];
   final ReplaySubject<CzechFont> _firstBatch = ReplaySubject();
   final ReplaySubject<CzechFont> _secondBatch = ReplaySubject();
   final ReplaySubject<CzechFont> _thirdBatch = ReplaySubject();
@@ -23,24 +24,32 @@ class FontBloc {
       Rx.merge([_firstBatch, _secondBatch, _thirdBatch]);
 
   Stream<List<CzechFont>> getFilteredStream(Confidence confidence) {
-    return concatStreams
-        .scan(
-          (List<CzechFont> acc, value, index) => acc..add(value),
-          <CzechFont>[],
-        )
-        .map(
-          (list) => list.where((item) {
-            if (confidence == Confidence.ANY) return true;
-            return item.confidence == confidence;
-          }).toList(),
-        )
-        .map((l) => l..sort((a, b) => a.fontName.compareTo(b.fontName)))
-        .asBroadcastStream();
+    return concatStreams.scan(
+      (List<CzechFont> acc, value, index) => acc..add(value),
+      <CzechFont>[],
+    ).map(
+      (list) {
+        final l = list.where((item) {
+          if (confidence == Confidence.ANY) return true;
+          return item.confidence == confidence;
+        }).toList()
+          ..sort((a, b) => a.fontName.compareTo(b.fontName));
+        currFontList = List.from(l);
+        return l;
+      },
+    ).asBroadcastStream();
   }
 
-  void addCzechFont(CzechFont font) {
+  void addCzechFont(ScanBatch scanBatch, CzechFont font) {
     _scan.add(++_scanCounter);
-    _firstBatch.add(font);
+
+    if (scanBatch == ScanBatch.FIRST) {
+      _firstBatch.add(font);
+    } else if (scanBatch == ScanBatch.SECOND) {
+      _secondBatch.add(font);
+    } else {
+      _thirdBatch.add(font);
+    }
   }
 
   void dispose() {

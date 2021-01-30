@@ -117,6 +117,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
     print('> $confidence');
 
     fontBloc.addCzechFont(
+      scanBatch,
       CzechFont(fontName: fontName, confidence: confidence),
     );
     return Future.value(fontName);
