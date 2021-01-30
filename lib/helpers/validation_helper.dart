@@ -70,6 +70,11 @@ class ValidationHelper {
     final relativeWidthDiff = (czechWidth - baseWidth) / baseWidth;
     final relativeHeightDiff = (czechHeight - baseHeight) / baseHeight;
 
+    // GoogleFonts is rendered but without style
+    if (relativeWidthDiff == 0.0035087719298245615 && baseHeight == 21) {
+      return null;
+    }
+
     if (fontName != null) {
       print(
         '\n$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff  ${(getGlobalKey(scanBatch).currentContext?.widget as Text)?.style?.fontFamily}',
@@ -77,10 +82,7 @@ class ValidationHelper {
     }
 
     // probably invisible characters
-    if (baseWidth == 0 ||
-        baseHeight == 0 ||
-        czechWidth == 0 ||
-        czechHeight == 0) return Confidence.LOWEST;
+    if (czechWidth == 0 || czechHeight == 0) return Confidence.LOWEST;
 
     // highly probable that it is valid Czech font
     if (sizeBase == sizeCzech) return Confidence.HIGHEST;
@@ -92,7 +94,9 @@ class ValidationHelper {
     // very unlikely that sentence in Czech will be shorter or smaller
     if (relativeWidthDiff < -0.01) return Confidence.LOWEST;
     if (relativeWidthDiff < -0.006) return Confidence.LOW;
-    if (relativeWidthDiff < -0.004) return Confidence.MEDIUM;
+    if (relativeWidthDiff < -0.0032) return Confidence.MEDIUM;
+    if (relativeWidthDiff < -0.0025) return Confidence.HIGH;
+    if (relativeWidthDiff < 0) return Confidence.HIGHEST;
 
     // very unlikely that sentence in Czech will be smaller
     if (relativeHeightDiff < -0.5) return Confidence.LOWEST;
