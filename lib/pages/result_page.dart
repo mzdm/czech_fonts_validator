@@ -22,18 +22,21 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> {
-  final ValidationHelper valHelper = ValidationHelper();
+  FontBloc get fontBloc => widget.fontBloc;
 
-  final selectedFilter = new ValueNotifier<Confidence>(Confidence.UNKWN);
+  List<CzechFont> get currFontList => fontBloc.currFontList;
+
+  final selectedFilter = new ValueNotifier<Confidence>(Confidence.HIGHEST);
 
   Confidence get filterState => selectedFilter?.value;
 
   void changeFilterState(Confidence newVal) => selectedFilter?.value = newVal;
 
-  void _drawerMenu(String value) {
-    if (value == _drawerMenuActions.elementAt(0)) {
-      print(_drawerMenuActions.elementAt(0));
+  void _onDrawerAction(String item) {
+    if (item == _drawerMenuActions.elementAt(0)) {
+      // Copy plain fonts with HIGHEST & HIGH confidence
     } else {
+      // Download all as JSON
       print(_drawerMenuActions.elementAt(1));
     }
   }
@@ -41,7 +44,7 @@ class _ResultPageState extends State<ResultPage> {
   @override
   void dispose() {
     selectedFilter.dispose();
-    widget.fontBloc.dispose();
+    fontBloc.dispose();
     super.dispose();
   }
 
@@ -109,12 +112,12 @@ class _ResultPageState extends State<ResultPage> {
   PopupMenuButton<String> buildDrawerMenu() {
     return PopupMenuButton<String>(
       icon: Icon(Icons.menu),
-      onSelected: _drawerMenu,
+      onSelected: _onDrawerAction,
       itemBuilder: (_) => _drawerMenuActions.map(
-        (menuAction) {
+        (value) {
           return PopupMenuItem<String>(
-            value: menuAction,
-            child: Text(menuAction),
+            value: value,
+            child: Text(value),
           );
         },
       ).toList(),
@@ -126,7 +129,7 @@ class _ResultPageState extends State<ResultPage> {
       valueListenable: selectedFilter,
       builder: (_, value, __) {
         return StreamBuilder<List<CzechFont>>(
-          stream: widget.fontBloc.getFilteredStream(value),
+          stream: fontBloc.getFilteredStream(value),
           builder: (_, snapshot) {
             if (snapshot.hasData) {
               final czechFontsList = snapshot.data;
@@ -180,6 +183,8 @@ class _ResultPageState extends State<ResultPage> {
   }
 
   Text displayPhraseText(String phrase, CzechFont font) {
+    final valHelper = ValidationHelper();
+
     return Text(
       phrase,
       style: valHelper.getFontTextStyle(font.fontName, fontSize: 26.0),

@@ -21,9 +21,9 @@ class FontValidationPage extends StatefulWidget {
 }
 
 class _FontValidationPageState extends State<FontValidationPage> {
-  final shouldValidate = new ValueNotifier<bool>(false);
   FontBloc fontBloc;
-  TextStyle textStyle;
+
+  final shouldValidate = new ValueNotifier<bool>(false);
 
   bool get validationState => shouldValidate?.value;
 
