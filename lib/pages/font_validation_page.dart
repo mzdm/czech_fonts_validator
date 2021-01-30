@@ -47,7 +47,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
     fontBloc.scanCounter.listen((state) {
       print(state);
       final totalScanLength = widget.fonts.fontNames.length;
-      if (state >= 50) {
+      if (state == 300) {
         fontBloc.dispose();
         SchedulerBinding.instance.addPostFrameCallback(
           (_) {
@@ -95,9 +95,9 @@ class _FontValidationPageState extends State<FontValidationPage> {
   Future<String> checkNext(ScanBatch scanBatch, String fontName) async {
     final valHelper = ValidationHelper();
 
-    await Future.delayed(Duration(milliseconds: 200));
+    await Future.delayed(Duration(milliseconds: 100));
 
-    int recheckDuration = 256;
+    int recheckDuration = 64;
     while (!valHelper.areGoogleFontsRendered(scanBatch) ||
         valHelper.calcCzechFontConfidence(scanBatch) == null) {
       if (!validationState) return Future.value(null);
