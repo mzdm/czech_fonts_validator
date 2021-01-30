@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-enum Confidence { UNKWN, ANY, HIGHEST, HIGH, MEDIUM, LOW, LOWEST }
+enum Confidence { ANY, HIGHEST, HIGH, MEDIUM, LOW, LOWEST }
 
 class CzechFont extends Equatable {
   final String fontName;
@@ -28,7 +28,7 @@ class CzechFont extends Equatable {
         return confidence;
       }
     }
-    return Confidence.UNKWN;
+    return Confidence.ANY;
   }
 
   @override

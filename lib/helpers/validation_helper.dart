@@ -108,6 +108,6 @@ class ValidationHelper {
     if (relativeWidthDiff <= 0.05) return Confidence.LOW;
     if (relativeWidthDiff <= 0.09) return Confidence.LOWEST;
 
-    return Confidence.UNKWN;
+    return Confidence.LOWEST;
   }
 }
