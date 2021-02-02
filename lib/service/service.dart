@@ -12,7 +12,7 @@ class Service {
   final http.Client _httpClient;
 
   static const _baseUrl =
-      'https://raw.githubusercontent.com/mzdm/google-language-fonts-flutter/dev-1.0.0/generator/lang_font_subsets/fonts.json';
+      'https://raw.githubusercontent.com/mzdm/google-language-fonts-flutter/master/generator/lang_font_subsets/fonts.json';
   static const _langLookupVal = 'LatinExt';
 
   Future<LanguageFonts> fetchBaseFonts() async {
