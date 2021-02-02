@@ -1,17 +1,13 @@
-import 'dart:convert';
-
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:js' as js;
-import 'dart:html' as html;
 
 class Utils {
   static const _srcUrl = 'https://github.com/mzdm/czech_fonts_validator';
 
   /// Opens the given [url] in a browser, on web in the new tab.
-  static void launchUrl(
+  void launchUrl(
     BuildContext context, {
     String url = _srcUrl,
   }) async {
@@ -22,7 +18,7 @@ class Utils {
     }
   }
 
-  static void copyPlainData(
+  void copyPlainData(
     BuildContext context, {
     @required List<CzechFont> data,
     @required Confidence confidence,
@@ -43,21 +39,13 @@ class Utils {
     );
   }
 
-  static void downloadDataAsJson(
+  void downloadDataAsJson(
     BuildContext context, {
     @required List<CzechFont> data,
   }) {
-    try {
-      final jsonData = jsonEncode(data.map((e) => e.toJson()).toList());
-      final utfEncoded = utf8.encode(jsonData);
-      final blob = html.Blob([utfEncoded]);
-      js.context.callMethod("webSaveAs", [blob, "czech_fonts.json"]);
-    } catch (e) {
-      print(e);
-      showSnackBar(context, e?.toString());
-    }
+    throw ('Method called on unsupported platform');
   }
 
-  static void showSnackBar(BuildContext context, String text) =>
+  void showSnackBar(BuildContext context, String text) =>
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
 }

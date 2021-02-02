@@ -1,7 +1,9 @@
 import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
-import 'package:czech_fonts_validator/utils/utils.dart';
+import 'package:czech_fonts_validator/utils/utils.dart'
+    if (dart.library.html) 'package:czech_fonts_validator/utils/web_utils.dart'
+    as u;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +25,8 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> {
+  final u.Utils utils = u.Utils();
+
   FontBloc get fontBloc => widget.fontBloc;
 
   List<CzechFont> get allFontsList => fontBloc.allValidatedFontsList;
@@ -36,10 +40,10 @@ class _ResultPageState extends State<ResultPage> {
   void onDrawerAction(String item) {
     if (item == _drawerMenuActions.elementAt(0)) {
       // Copy plain fonts in this Confidence category
-      Utils.copyPlainData(context, data: allFontsList, confidence: filterState);
+      utils.copyPlainData(context, data: allFontsList, confidence: filterState);
     } else {
       // Download all as JSON
-      Utils.downloadDataAsJson(context, data: allFontsList);
+      utils.downloadDataAsJson(context, data: allFontsList);
     }
   }
 
@@ -69,7 +73,7 @@ class _ResultPageState extends State<ResultPage> {
 
   Widget buildSrcTextButton(BuildContext context) {
     return InkWell(
-      onTap: () => Utils.launchUrl(context),
+      onTap: () => utils.launchUrl(context),
       child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 7.0),
