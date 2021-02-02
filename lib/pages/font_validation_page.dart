@@ -90,7 +90,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
       await Future.delayed(Duration(milliseconds: recheckDur));
       recheckDur *= 2;
 
-      if (recheckDur == 2048) {
+      if (recheckDur == 4096) {
         print(
           'FAILED_CHECK: font \'$fontName\' was not successfully rendered in time',
         );
@@ -175,6 +175,8 @@ class _FontValidationPageState extends State<FontValidationPage> {
       builder: (_, snapshot) {
         if (snapshot.hasData) {
           final currFontName = snapshot.data;
+          final screenSize = MediaQuery?.of(context)?.size?.width ?? 0;
+          final isScreenSmall = screenSize < 780;
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -182,13 +184,19 @@ class _FontValidationPageState extends State<FontValidationPage> {
               Text(
                 ValidationHelper.latinPhrase,
                 key: valHelper.getGlobalKey(scanBatch),
-                style: valHelper.getFontTextStyle(currFontName),
+                style: valHelper.getFontTextStyle(
+                  currFontName,
+                  fontSize: isScreenSmall ? 12.0 : null,
+                ),
               ),
               Padding(padding: EdgeInsets.symmetric(vertical: 10.0)),
               Text(
                 ValidationHelper.czechPhrase,
                 key: valHelper.getGlobalKey(scanBatch, isLatin: false),
-                style: valHelper.getFontTextStyle(currFontName),
+                style: valHelper.getFontTextStyle(
+                  currFontName,
+                  fontSize: isScreenSmall ? 12.0 : null,
+                ),
               ),
             ],
           );
