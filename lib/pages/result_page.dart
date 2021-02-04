@@ -1,6 +1,7 @@
 import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
+import 'package:czech_fonts_validator/pages/font_validation_page.dart';
 import 'package:czech_fonts_validator/utils/utils.dart'
     if (dart.library.html) 'package:czech_fonts_validator/utils/web_utils.dart'
     as u;
@@ -68,6 +69,7 @@ class _ResultPageState extends State<ResultPage> {
         ],
       ),
       body: buildListStream(),
+      floatingActionButton: buildFAB(context),
     );
   }
 
@@ -138,15 +140,21 @@ class _ResultPageState extends State<ResultPage> {
           stream: fontBloc.getFilteredStream(value),
           builder: (_, snapshot) {
             if (snapshot.hasData) {
-              final czechFontsList = snapshot.data;
+              final czFontsList = snapshot.data;
+              final total = czFontsList.length;
 
-              return czechFontsList.isEmpty
+              return czFontsList.isEmpty
                   ? Center(child: Text('No fonts found in: $value'))
                   : Scrollbar(
                       child: ListView.separated(
-                        itemCount: czechFontsList.length,
+                        itemCount: total,
                         separatorBuilder: (_, __) => Divider(thickness: 2.0),
-                        itemBuilder: (_, i) => buildListItem(czechFontsList[i]),
+                        itemBuilder: (_, i) {
+                          if (i == 0) {
+                            return buildInitialListItem(czFontsList[i], total);
+                          }
+                          return buildListItem(czFontsList[i]);
+                        },
                       ),
                     );
             }
@@ -155,6 +163,24 @@ class _ResultPageState extends State<ResultPage> {
           },
         );
       },
+    );
+  }
+
+  Column buildInitialListItem(CzechFont czechFont, int length) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Align(
+            alignment: AlignmentDirectional.topEnd,
+            child: Text(
+              'Total fonts: $length',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+        ),
+        buildListItem(czechFont),
+      ],
     );
   }
 
@@ -194,6 +220,18 @@ class _ResultPageState extends State<ResultPage> {
     return Text(
       phrase,
       style: valHelper.getFontTextStyle(font.fontName, fontSize: 26.0),
+    );
+  }
+
+  FloatingActionButton buildFAB(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        return Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => FontValidationPage()),
+        );
+      },
+      tooltip: 'Revalidate fonts',
+      child: Icon(Icons.refresh),
     );
   }
 }
