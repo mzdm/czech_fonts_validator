@@ -138,15 +138,21 @@ class _ResultPageState extends State<ResultPage> {
           stream: fontBloc.getFilteredStream(value),
           builder: (_, snapshot) {
             if (snapshot.hasData) {
-              final czechFontsList = snapshot.data;
+              final czFontsList = snapshot.data;
+              final total = czFontsList.length;
 
-              return czechFontsList.isEmpty
+              return czFontsList.isEmpty
                   ? Center(child: Text('No fonts found in: $value'))
                   : Scrollbar(
                       child: ListView.separated(
-                        itemCount: czechFontsList.length,
+                        itemCount: total,
                         separatorBuilder: (_, __) => Divider(thickness: 2.0),
-                        itemBuilder: (_, i) => buildListItem(czechFontsList[i]),
+                        itemBuilder: (_, i) {
+                          if (i == 0) {
+                            return buildInitialListItem(czFontsList[i], total);
+                          }
+                          return buildListItem(czFontsList[i]);
+                        },
                       ),
                     );
             }
@@ -155,6 +161,24 @@ class _ResultPageState extends State<ResultPage> {
           },
         );
       },
+    );
+  }
+
+  Column buildInitialListItem(CzechFont czechFont, int length) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Align(
+            alignment: AlignmentDirectional.topEnd,
+            child: Text(
+              'Total fonts: $length',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+        ),
+        buildListItem(czechFont),
+      ],
     );
   }
 
