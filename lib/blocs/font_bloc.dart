@@ -6,6 +6,8 @@ import 'package:rxdart/rxdart.dart';
 enum ScanBatch { FIRST, SECOND, THIRD }
 
 class FontBloc {
+  final initialFontsList = <CzechFont>[];
+
   var allValidatedFontsList = <CzechFont>[];
   final ReplaySubject<CzechFont> _firstBatch = ReplaySubject();
   final ReplaySubject<CzechFont> _secondBatch = ReplaySubject();
@@ -15,16 +17,24 @@ class FontBloc {
   var _scanCounter = 0;
   final BehaviorSubject<int> _scan = BehaviorSubject.seeded(0);
 
-  FontBloc() {
+  FontBloc({List<CzechFont> initialFontsList}) {
+    if (initialFontsList != null) {
+      this.initialFontsList.addAll(initialFontsList);
+    }
+
     scanCounter = _scan.stream;
     // TODO: refactor heavy ReplaySubject with BehaviorSubject
   }
 
-  Stream<CzechFont> get concatStreams =>
-      Rx.concat([_firstBatch, _secondBatch, _thirdBatch]);
+  Stream<CzechFont> get dataStreams {
+    if (initialFontsList.isNotEmpty) {
+      return Stream.fromIterable(initialFontsList);
+    }
+    return Rx.concat([_firstBatch, _secondBatch, _thirdBatch]);
+  }
 
   Stream<List<CzechFont>> getFilteredStream(Confidence confidence) {
-    return concatStreams.scan(
+    return dataStreams.scan(
       (List<CzechFont> acc, value, index) => acc..add(value),
       <CzechFont>[],
     ).map(

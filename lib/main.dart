@@ -1,9 +1,12 @@
+import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/pages/font_validation_page.dart';
+import 'package:czech_fonts_validator/pages/result_page.dart';
 import 'package:czech_fonts_validator/service/service.dart';
+import 'package:czech_fonts_validator/widgets/display_status_message.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'models/language_fonts_model.dart';
+import 'blocs/font_bloc.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,29 +18,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: FutureBuilder<LanguageFonts>(
-        future: service.fetchBaseFonts(),
+      home: FutureBuilder<List<CzechFont>>(
+        future: service.fetchValidatedFonts(),
         builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
-            print('fetched font data');
-            return FontValidationPage(fonts: snapshot.data);
+            final fontBloc = FontBloc(initialFontsList: snapshot.data);
+            return ResultPage(fontBloc: fontBloc);
           }
 
           if (snapshot.hasError) {
-            return buildPageContent('Error: Couldn\'t retrieve data.');
+            return FontValidationPage();
           }
 
-          return buildPageContent('Retrieving data ...');
+          return DisplayStatusMessage('Retrieving data ...');
         },
-      ),
-    );
-  }
-
-  Scaffold buildPageContent(String text) {
-    return Scaffold(
-      body: Center(
-        child: Text(text),
       ),
     );
   }

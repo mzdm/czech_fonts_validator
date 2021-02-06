@@ -5,17 +5,14 @@ import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/models/language_fonts_model.dart';
 import 'package:czech_fonts_validator/pages/result_page.dart';
+import 'package:czech_fonts_validator/service/service.dart';
+import 'package:czech_fonts_validator/widgets/custom_appbar.dart';
+import 'package:czech_fonts_validator/widgets/display_status_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:http/http.dart' as http;
 
 class FontValidationPage extends StatefulWidget {
-  const FontValidationPage({
-    Key key,
-    @required this.fonts,
-  }) : super(key: key);
-
-  final LanguageFonts fonts;
-
   @override
   _FontValidationPageState createState() => _FontValidationPageState();
 }
@@ -23,9 +20,13 @@ class FontValidationPage extends StatefulWidget {
 class _FontValidationPageState extends State<FontValidationPage> {
   FontBloc fontBloc;
 
+  LanguageFonts fontsToValidate;
+
   final valHelper = ValidationHelper();
 
-  List<String> get allFontNamesList => widget.fonts.fontNames;
+  final service = Service(httpClient: http.Client());
+
+  List<String> get allFontNamesList => fontsToValidate?.fontNames ?? [];
 
   final shouldValidate = new ValueNotifier<bool>(false);
 
@@ -50,16 +51,12 @@ class _FontValidationPageState extends State<FontValidationPage> {
   void attachCounterListener() {
     fontBloc.scanCounter.listen((state) {
       print(state);
-      if (state == allFontNamesList.length) {
+      if (validationState == true && state == allFontNamesList.length) {
         fontBloc?.dispose();
         SchedulerBinding.instance.addPostFrameCallback(
-          (_) {
-            return Navigator.of(context)
-                .push(MaterialPageRoute(
-                  builder: (_) => ResultPage(fontBloc: fontBloc),
-                ))
-                .whenComplete(() => shouldValidate?.value = false);
-          },
+          (_) => Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => ResultPage(fontBloc: fontBloc)),
+              (_) => false),
         );
       }
     });
@@ -118,10 +115,30 @@ class _FontValidationPageState extends State<FontValidationPage> {
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<LanguageFonts>(
+      future: service.fetchUnvalidatedFonts(),
+      builder: (_, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasData) {
+          fontsToValidate = snapshot.data;
+          return buildPageContentSuccess();
+        }
+
+        if (snapshot.hasError) {
+          return DisplayStatusMessage('Error: Couldn\'t retrieve data.');
+        }
+
+        return DisplayStatusMessage('Retrieving data ...');
+      },
+    );
+  }
+
+  ValueListenableBuilder<bool> buildPageContentSuccess() {
     return ValueListenableBuilder<bool>(
       valueListenable: shouldValidate,
       builder: (_, value, __) {
         return Scaffold(
+          appBar: customAppBar(),
           body: Center(
             child: !value
                 ? Text('Press [PLAY] button to start validating Czech fonts')

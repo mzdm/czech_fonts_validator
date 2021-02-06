@@ -1,6 +1,7 @@
 import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/helpers/validation_helper.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
+import 'package:czech_fonts_validator/pages/font_validation_page.dart';
 import 'package:czech_fonts_validator/utils/utils.dart'
     if (dart.library.html) 'package:czech_fonts_validator/utils/web_utils.dart'
     as u;
@@ -68,6 +69,7 @@ class _ResultPageState extends State<ResultPage> {
         ],
       ),
       body: buildListStream(),
+      floatingActionButton: buildFAB(context),
     );
   }
 
@@ -218,6 +220,18 @@ class _ResultPageState extends State<ResultPage> {
     return Text(
       phrase,
       style: valHelper.getFontTextStyle(font.fontName, fontSize: 26.0),
+    );
+  }
+
+  FloatingActionButton buildFAB(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        return Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => FontValidationPage()),
+        );
+      },
+      tooltip: 'Revalidate fonts',
+      child: Icon(Icons.refresh),
     );
   }
 }
