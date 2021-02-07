@@ -15,7 +15,7 @@ flutter channel beta
 flutter upgrade
 flutter config --enable-web
 flutter pub get
-flutter run -d chrome
+flutter run -d chrome --web-renderer=html
 ```
 
 ### How it works
