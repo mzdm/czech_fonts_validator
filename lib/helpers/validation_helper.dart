@@ -1,7 +1,7 @@
 import 'package:czech_fonts_validator/blocs/font_bloc.dart';
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:flutter/material.dart';
-import 'package:google_language_fonts/google_fonts.dart';
+import 'package:google_language_fonts/google_language_fonts.dart';
 
 final _czechTextKey = GlobalKey(debugLabel: 'czechTextKey');
 final _latinTextKey = GlobalKey(debugLabel: 'latinTextKey');
@@ -60,6 +60,7 @@ class ValidationHelper {
             ?.style;
 
     if (styleBase == null || styleCzech == null) return false;
+
     return true;
   }
 

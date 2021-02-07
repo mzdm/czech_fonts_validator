@@ -134,12 +134,10 @@ packages:
   google_language_fonts:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "dev-1.0.0"
-      resolved-ref: "7a31777597a49c7e616db8fc4bdf604f1f6f3b65"
-      url: "git://github.com/mzdm/google-language-fonts-flutter.git"
-    source: git
-    version: "0.1.1"
+      name: google_language_fonts
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   http:
     dependency: "direct main"
     description:
