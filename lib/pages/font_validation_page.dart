@@ -10,6 +10,7 @@ import 'package:czech_fonts_validator/widgets/custom_appbar.dart';
 import 'package:czech_fonts_validator/widgets/display_status_message.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,7 +40,13 @@ class _FontValidationPageState extends State<FontValidationPage> {
 
   bool get slowModeState => isSlowMode?.value;
 
-  void switchSlowModeState(bool value) => isSlowMode?.value = value;
+  void switchSlowModeState(bool value) {
+    if (value == slowModeState) {
+      isSlowMode?.value = !slowModeState;
+    } else {
+      isSlowMode?.value = value;
+    }
+  }
 
   @override
   void initState() {
@@ -177,12 +184,16 @@ class _FontValidationPageState extends State<FontValidationPage> {
                 },
               ),
               Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 15.0),
-                  child: Text(
-                    'Slow Mode',
-                    style: TextStyle(
-                      color: Colors.black87,
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () => switchSlowModeState(slowModeState),
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 15.0),
+                      child: Text(
+                        'Slow Mode',
+                        style: TextStyle(color: Colors.black87),
+                      ),
                     ),
                   ),
                 ),
