@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-AppBar customAppBar() {
+AppBar customAppBar(BuildContext context) {
   return AppBar(
-    backgroundColor: Colors.white,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     elevation: 0.0,
     iconTheme: IconThemeData(color: Colors.black87),
   );

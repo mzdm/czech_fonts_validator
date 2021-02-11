@@ -138,7 +138,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
       valueListenable: shouldValidate,
       builder: (_, value, __) {
         return Scaffold(
-          appBar: customAppBar(),
+          appBar: customAppBar(context),
           body: Center(
             child: !value
                 ? Text('Press [PLAY] button to start validating Czech fonts')
