@@ -19,7 +19,7 @@ flutter run -d chrome --web-renderer=html
 ```
 
 ### How it works
-The app fetches all [Latin Extended](https://fonts.google.com/?subset=latin-ext) font names from Google Fonts from [this generated JSON file](https://github.com/mzdm/google-language-fonts-flutter/blob/dev-1.0.0/generator/lang_font_subsets/fonts.json). Latin Extended fonts should include also letters from the Czech alphabet however there are still some fonts that don't support these letters.
+The app fetches all [Latin Extended](https://fonts.google.com/?subset=latin-ext) font names from Google Fonts from [this generated JSON file](https://github.com/mzdm/google-language-fonts-flutter/blob/master/generator/lang_font_subsets/fonts.json). Latin Extended fonts should include also letters from the Czech alphabet however there are still some fonts that don't support these letters.
 
 This app renders both Latin Extended and Czech test phrase and then calculates the relative difference in width & height sizes and calculates the so-called **confidence**.
 
