@@ -20,8 +20,8 @@ class Utils {
 
   void copyPlainData(
     BuildContext context, {
-    @required List<CzechFont> data,
-    @required Confidence confidence,
+    required List<CzechFont> data,
+    required Confidence confidence,
   }) {
     final filtered = data
         .where((e) {
@@ -41,7 +41,7 @@ class Utils {
 
   void downloadDataAsJson(
     BuildContext context, {
-    @required List<CzechFont> data,
+    required List<CzechFont> data,
   }) {
     throw ('Method called on unsupported platform');
   }

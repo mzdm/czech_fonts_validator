@@ -8,8 +8,8 @@ class CzechFont extends Equatable {
   final Confidence confidence;
 
   const CzechFont({
-    @required this.fontName,
-    @required this.confidence,
+    required this.fontName,
+    required this.confidence,
   });
 
   static CzechFont fromJson(Map<String, dynamic> json) => CzechFont(

@@ -10,7 +10,7 @@ class Utils extends base.Utils {
   @override
   void downloadDataAsJson(
     BuildContext context, {
-    @required List<CzechFont> data,
+    required List<CzechFont> data,
   }) {
     try {
       final jsonData = jsonEncode(data.map((e) => e.toJson()).toList());
@@ -19,7 +19,7 @@ class Utils extends base.Utils {
       js.context.callMethod("webSaveAs", [blob, "czech_fonts.json"]);
     } catch (e) {
       print(e);
-      showSnackBar(context, e?.toString());
+      showSnackBar(context, e.toString());
     }
   }
 }

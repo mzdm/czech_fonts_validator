@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:czech_fonts_validator/models/czech_font_model.dart';
 import 'package:czech_fonts_validator/models/language_fonts_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class Service {
   const Service({
-    @required http.Client httpClient,
+    required http.Client httpClient,
   }) : _httpClient = httpClient;
 
   final http.Client _httpClient;
@@ -20,10 +19,10 @@ class Service {
   static const _langLookupVal = 'LatinExt';
 
   Future<List<CzechFont>> fetchValidatedFonts() async {
-    final response = await _httpClient.get(_baseUrlValidated);
+    final response = await _httpClient.get(_getUri(_baseUrlValidated));
 
     if (response.statusCode != 200) {
-      throw (response?.toString());
+      throw (response.toString());
     }
 
     final responseData = jsonDecode(response.body);
@@ -42,16 +41,16 @@ class Service {
     return czechFontsList;
   }
 
-  Future<LanguageFonts> fetchUnvalidatedFonts() async {
-    final response = await _httpClient.get(_baseUrlUnvalidated);
+  Future<LanguageFonts>? fetchUnvalidatedFonts() async {
+    final response = await _httpClient.get(_getUri(_baseUrlUnvalidated));
 
     if (response.statusCode != 200) {
-      throw (response?.toString());
+      throw (response.toString());
     }
 
     final responseData = jsonDecode(response.body);
 
-    LanguageFonts lookupLanguageFonts;
+    LanguageFonts? lookupLanguageFonts;
     for (final element in (responseData as List)) {
       try {
         final languageFonts = LanguageFonts.fromJson(element);
@@ -65,6 +64,8 @@ class Service {
     }
     _httpClient.close();
 
-    return lookupLanguageFonts;
+    return Future.value(lookupLanguageFonts);
   }
+
+  Uri _getUri(String url) => Uri.parse(url);
 }

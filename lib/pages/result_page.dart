@@ -17,8 +17,8 @@ class ResultPage extends StatefulWidget {
   final FontBloc fontBloc;
 
   const ResultPage({
-    Key key,
-    @required this.fontBloc,
+    Key? key,
+    required this.fontBloc,
   }) : super(key: key);
 
   @override
@@ -34,9 +34,9 @@ class _ResultPageState extends State<ResultPage> {
 
   final selectedFilter = new ValueNotifier<Confidence>(Confidence.HIGHEST);
 
-  Confidence get filterState => selectedFilter?.value;
+  Confidence get filterState => selectedFilter.value;
 
-  void changeFilterState(Confidence newVal) => selectedFilter?.value = newVal;
+  void changeFilterState(Confidence newVal) => selectedFilter.value = newVal;
 
   void onDrawerAction(String item) {
     if (item == _drawerMenuActions.elementAt(0)) {
@@ -106,7 +106,7 @@ class _ResultPageState extends State<ResultPage> {
                     value: Confidence.values[i],
                     groupValue: filterState,
                     title: child,
-                    onChanged: changeFilterState,
+                    onChanged: (value) => changeFilterState(value!),
                   );
                 },
               ),
@@ -140,7 +140,7 @@ class _ResultPageState extends State<ResultPage> {
           stream: fontBloc.getFilteredStream(value),
           builder: (_, snapshot) {
             if (snapshot.hasData) {
-              final czFontsList = snapshot.data;
+              final czFontsList = snapshot.data!;
               final total = czFontsList.length;
 
               return czFontsList.isEmpty
@@ -166,7 +166,7 @@ class _ResultPageState extends State<ResultPage> {
     );
   }
 
-  Column buildInitialListItem(CzechFont czechFont, int length) {
+  Widget buildInitialListItem(CzechFont czechFont, int length) {
     return Column(
       children: [
         Padding(
@@ -216,7 +216,6 @@ class _ResultPageState extends State<ResultPage> {
 
   Text displayPhraseText(String phrase, CzechFont font) {
     final valHelper = ValidationHelper();
-
     return Text(
       phrase,
       style: valHelper.getFontTextStyle(font.fontName, fontSize: 26.0),
@@ -226,7 +225,7 @@ class _ResultPageState extends State<ResultPage> {
   FloatingActionButton buildFAB(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        return Navigator.of(context).push(
+        Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => FontValidationPage()),
         );
       },

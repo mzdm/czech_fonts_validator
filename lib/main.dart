@@ -4,6 +4,7 @@ import 'package:czech_fonts_validator/pages/result_page.dart';
 import 'package:czech_fonts_validator/service/service.dart';
 import 'package:czech_fonts_validator/widgets/display_status_message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 import 'blocs/font_bloc.dart';

@@ -31,7 +31,7 @@ class ValidationHelper {
     }
   }
 
-  TextStyle getFontTextStyle(String fontName, {double fontSize = 18.0}) =>
+  TextStyle getFontTextStyle(String fontName, {double? fontSize = 18.0}) =>
       GoogleFonts.getFont(fontName).copyWith(fontSize: fontSize);
 
   List<String> getFontBatch(
@@ -54,19 +54,20 @@ class ValidationHelper {
 
   bool isFontRendered(ScanBatch scanBatch) {
     final styleBase =
-        (getGlobalKey(scanBatch).currentContext?.widget as Text)?.style;
-    final styleCzech =
-        (getGlobalKey(scanBatch, isLatin: false).currentContext?.widget as Text)
-            ?.style;
+        (getGlobalKey(scanBatch).currentContext?.widget as Text?)?.style;
+    final styleCzech = (getGlobalKey(scanBatch, isLatin: false)
+            .currentContext
+            ?.widget as Text?)
+        ?.style;
 
     if (styleBase == null || styleCzech == null) return false;
 
     return true;
   }
 
-  Confidence calcFontConfidence(ScanBatch scanBatch, [String fontName]) {
-    Size sizeBase;
-    Size sizeCzech;
+  Confidence? calcFontConfidence(ScanBatch scanBatch, [String? fontName]) {
+    Size? sizeBase;
+    Size? sizeCzech;
 
     try {
       sizeBase = getGlobalKey(scanBatch).currentContext?.size;
@@ -74,6 +75,8 @@ class ValidationHelper {
     } catch (e) {
       return null;
     }
+
+    if (sizeBase == null || sizeCzech == null) return null;
 
     final baseWidth = sizeBase.width;
     final baseHeight = sizeBase.height;
@@ -91,7 +94,7 @@ class ValidationHelper {
 
     if (fontName != null) {
       print(
-        '\n$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff  ${(getGlobalKey(scanBatch).currentContext?.widget as Text)?.style?.fontFamily}',
+        '\n$fontName:   Δw = $relativeWidthDiff  |  Δh: = $relativeHeightDiff  ${(getGlobalKey(scanBatch).currentContext?.widget as Text?)?.style?.fontFamily}',
       );
     }
 
