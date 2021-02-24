@@ -1,13 +1,12 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 
 class LanguageFonts extends Equatable {
   final String langName;
   final List<String> fontNames;
 
   const LanguageFonts({
-    @required this.langName,
-    @required this.fontNames,
+    required this.langName,
+    required this.fontNames,
   });
 
   factory LanguageFonts.fromJson(Map<String, dynamic> json) => LanguageFonts(

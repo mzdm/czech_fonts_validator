@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 AppBar customAppBar(
   BuildContext context, {
-  List<Widget> actions,
+  List<Widget>? actions,
 }) {
   return AppBar(
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,

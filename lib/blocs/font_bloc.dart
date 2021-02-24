@@ -13,11 +13,11 @@ class FontBloc {
   final ReplaySubject<CzechFont> _secondBatch = ReplaySubject();
   final ReplaySubject<CzechFont> _thirdBatch = ReplaySubject();
 
-  Stream<int> scanCounter;
+  late final Stream<int> scanCounter;
   var _scanCounter = 0;
   final BehaviorSubject<int> _scan = BehaviorSubject.seeded(0);
 
-  FontBloc({List<CzechFont> initialFontsList}) {
+  FontBloc({List<CzechFont>? initialFontsList}) {
     if (initialFontsList != null) {
       this.initialFontsList.addAll(initialFontsList);
     }
@@ -35,7 +35,7 @@ class FontBloc {
 
   Stream<List<CzechFont>> getFilteredStream(Confidence confidence) {
     return dataStreams.scan(
-      (List<CzechFont> acc, value, index) => acc..add(value),
+      (List<CzechFont>? acc, value, index) => acc!..add(value),
       <CzechFont>[],
     ).map(
       (list) {

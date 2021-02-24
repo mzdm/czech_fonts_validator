@@ -8,7 +8,6 @@ import 'package:czech_fonts_validator/pages/result_page.dart';
 import 'package:czech_fonts_validator/service/service.dart';
 import 'package:czech_fonts_validator/widgets/custom_appbar.dart';
 import 'package:czech_fonts_validator/widgets/display_status_message.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,31 +19,31 @@ class FontValidationPage extends StatefulWidget {
 }
 
 class _FontValidationPageState extends State<FontValidationPage> {
-  FontBloc fontBloc;
+  late FontBloc fontBloc;
 
-  LanguageFonts fontsToValidate;
+  late LanguageFonts fontsToValidate;
 
   final valHelper = ValidationHelper();
 
   final service = Service(httpClient: http.Client());
 
-  List<String> get allFontNamesList => fontsToValidate?.fontNames ?? [];
+  List<String> get allFontNamesList => fontsToValidate.fontNames;
 
   final shouldValidate = new ValueNotifier<bool>(false);
 
-  bool get validationState => shouldValidate?.value;
+  bool get validationState => shouldValidate.value;
 
-  void switchValidationState() => shouldValidate?.value = !validationState;
+  void switchValidationState() => shouldValidate.value = !validationState;
 
   final isSlowMode = new ValueNotifier<bool>(true);
 
-  bool get slowModeState => isSlowMode?.value;
+  bool get slowModeState => isSlowMode.value;
 
   void switchSlowModeState(bool value) {
     if (value == slowModeState) {
-      isSlowMode?.value = !slowModeState;
+      isSlowMode.value = !slowModeState;
     } else {
-      isSlowMode?.value = value;
+      isSlowMode.value = value;
     }
   }
 
@@ -53,7 +52,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
     fontBloc = FontBloc();
     shouldValidate.addListener(() {
       if (!validationState) {
-        fontBloc?.dispose();
+        fontBloc.dispose();
         fontBloc = FontBloc();
         attachCounterListener();
       }
@@ -66,10 +65,11 @@ class _FontValidationPageState extends State<FontValidationPage> {
     fontBloc.scanCounter.listen((state) {
       print(state);
       if (validationState == true && state == allFontNamesList.length) {
-        fontBloc?.dispose();
-        SchedulerBinding.instance.addPostFrameCallback(
+        fontBloc.dispose();
+        SchedulerBinding.instance!.addPostFrameCallback(
           (_) => Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => ResultPage(fontBloc: fontBloc)),
+              MaterialPageRoute(
+                  builder: (_) => ResultPage(fontBloc: fontBloc)),
               (_) => false),
         );
       }
@@ -85,12 +85,13 @@ class _FontValidationPageState extends State<FontValidationPage> {
       if (i % 2 == 0) {
         yield fontNamesList[i ~/ 2];
       } else {
-        yield await validate(scanBatch, fontNamesList[i ~/ 2]);
+        final fontName = await validate(scanBatch, fontNamesList[i ~/ 2]);
+        if (fontName != null) yield fontName;
       }
     }
   }
 
-  Future<String> validate(ScanBatch scanBatch, String fontName) async {
+  Future<String?> validate(ScanBatch scanBatch, String fontName) async {
     final initWaitDur = slowModeState ? 400 : 100;
     await Future.delayed(Duration(milliseconds: initWaitDur));
 
@@ -116,7 +117,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
 
     fontBloc.addCzechFont(
       scanBatch,
-      CzechFont(fontName: fontName, confidence: confidence),
+      CzechFont(fontName: fontName, confidence: confidence ?? Confidence.ANY),
     );
     return Future.value(fontName);
   }
@@ -128,7 +129,7 @@ class _FontValidationPageState extends State<FontValidationPage> {
       builder: (_, snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData) {
-          fontsToValidate = snapshot.data;
+          fontsToValidate = snapshot.data!;
           return buildPageContentSuccess();
         }
 
@@ -242,8 +243,8 @@ class _FontValidationPageState extends State<FontValidationPage> {
       stream: validationStream(scanBatch),
       builder: (_, snapshot) {
         if (snapshot.hasData) {
-          final currFontName = snapshot.data;
-          final screenSize = MediaQuery?.of(context)?.size?.width ?? 0;
+          final String currFontName = snapshot.data!;
+          final screenSize = MediaQuery.maybeOf(context)?.size?.width ?? 0;
           final isScreenSmall = screenSize < 780;
 
           return Column(
